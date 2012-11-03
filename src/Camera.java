@@ -8,6 +8,8 @@ public class Camera {
 	private Matrix right;
 
 	private double ro, phi;
+	
+	private int moveForward, moveLeft;
 
 	public Camera() {
 		position = new Matrix(new double[][] { { 0, 0, -4, 1 } });
@@ -16,19 +18,27 @@ public class Camera {
 		forward = new Matrix(new double[][] { { 0, 0, -1, 1 } });
 		glu = new GLU();
 		ro = phi = 0;
+		moveForward = moveLeft = 0;
 	}
 
-	public void Update() {
+	public void Update(long l) {
+		if (l > 2000)
+			l = 2000;
+		
+		float back = (float)l * 0.0001f;
+		if (moveForward != 0)
+			position = position.minus(forward.times(back * moveForward));
+		
+		if (moveLeft != 0)
+			position = position.minus(right.times(-back * moveLeft));
+		
+		
 		Matrix position_forward = position.minus(forward);
 		glu.gluLookAt(position.Get(0, 0), position.Get(0, 1),
 				position.Get(0, 2), position_forward.Get(0, 0),
 				position_forward.Get(0, 1), position_forward.Get(0, 2),
 				up.Get(0, 0), up.Get(0, 1), up.Get(0, 2));
 
-	}
-
-	public void StepLeft() {
-		position = position.minus(right);
 	}
 
 	public void Look(int dx, int dy) {
@@ -72,5 +82,14 @@ public class Camera {
 		}
 		right = Matrix.Rotate(step, up, right);
 		forward = Matrix.Rotate(step, up, forward);
+	}
+
+	public void MoveForward(int i) {
+		moveForward = i;
+	}
+	
+	public void MoveLeft(int i)
+	{
+		moveLeft = i;
 	}
 }

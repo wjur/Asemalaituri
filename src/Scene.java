@@ -32,32 +32,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 		animator.start();
 		camera = new Camera();
 		width = height = 600;
-
-		addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				// TODO Auto-generated method stub
-				int code = e.getKeyCode();
-				if (code == KeyEvent.VK_LEFT) {
-					camera.StepLeft();
-					animator.notify();
-				}
-
-			}
-		});
 	}
 
 	@Override
@@ -65,8 +39,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glLoadIdentity();
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-
-		camera.Update();
+		
+		camera.Update(animator.getLastFPSUpdateTime());
 
 		// glRotatef(angle, 0, 0, 1);
 		// Render colored quad
@@ -145,7 +119,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		window.getContentPane().add(scene);
 		window.setSize(width, height);
 		window.setVisible(true);
-		scene.BindMouse();
+		scene.BindMouseKeyboard();
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		/*
@@ -157,10 +131,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 		 */
 	}
 
-	private void BindMouse() {
+	private void BindMouseKeyboard() {
 		// TODO Auto-generated method stub
 		Mouse mouse = new Mouse(width, height, this);
 		addMouseMotionListener(mouse);
+		Keyboard keyboard = new Keyboard(this);
+		addKeyListener(keyboard);
 	}
 
 }
