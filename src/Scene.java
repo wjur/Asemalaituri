@@ -37,19 +37,31 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private void drawStation(GL2 gl) {
 
 		gl.glPushMatrix();
-		gl.glTranslatef(0, 0, 10);
+		gl.glTranslatef(0, 0, 20);
 		gl.glScalef(10, 10, 10);
-		
 		gl.glRotatef(0, 0, 1, 0);
-		
 		drawFace(gl);
 		gl.glPopMatrix();
 		
 		gl.glPushMatrix();
-		gl.glTranslatef(0, 0, -10);
+		gl.glTranslatef(0, 0, -20);
 		gl.glScalef(10, 10, 10);
 		gl.glRotatef(180, 0, 1, 0);
+		drawFace(gl);
+		gl.glPopMatrix();
 		
+		
+		gl.glPushMatrix();
+		gl.glTranslatef(10, 0, 0);
+		gl.glScalef(10, 10, 20);
+		gl.glRotatef(90, 0, 1, 0);
+		drawFace(gl);
+		gl.glPopMatrix();
+		
+		gl.glPushMatrix();
+		gl.glTranslatef(-10, 0, 0);
+		gl.glScalef(10, 10, 20);
+		gl.glRotatef(-90, 0, 1, 0);
 		drawFace(gl);
 		gl.glPopMatrix();
 		
