@@ -12,7 +12,7 @@ public class Camera {
 	private int moveForward, moveLeft;
 
 	public Camera() {
-		position = new Matrix(new double[][] { { 0, 0, -4, 1 } });
+		position = new Matrix(new double[][] { { 0, 5, -4, 1 } });
 		up = new Matrix(new double[][] { { 0, 1, 0, 1 } });
 		right = new Matrix(new double[][] { { -1, 0, 0, 1 } });
 		forward = new Matrix(new double[][] { { 0, 0, -1, 1 } });
@@ -25,7 +25,7 @@ public class Camera {
 		if (l > 2000)
 			l = 2000;
 		
-		float back = (float)l * 0.0001f;
+		float back = (float)l * 0.0025f;
 		if (moveForward != 0)
 			position = position.minus(forward.times(back * moveForward));
 		
