@@ -25,11 +25,8 @@ public class Mouse implements MouseListener, MouseMotionListener {
 		try {
 			robot = new Robot();
 		} catch (AWTException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		this.
 
 		wrap = true;
 		robot.mouseMove(center.x, center.y);
@@ -44,12 +41,10 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseMoved(MouseEvent event) {
-		// TODO Auto-generated method stub
-		
 		if (!wrap) {
 			dx = event.getXOnScreen();
 			dy = event.getYOnScreen();
-			scene.camera.Look(center.x - dx, center.y - dy);
+			scene.camera.Look(-center.x + dx, -center.y + dy);
 			wrap = true;
 			robot.mouseMove(center.x, center.y);
 		} else
@@ -64,7 +59,6 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseEntered(MouseEvent event) {
-		// TODO Auto-generated method stub
 		wrap = true;
 		robot.mouseMove(center.x, center.y);
 	}

@@ -7,7 +7,7 @@ public class Camera {
 	private GLU glu;
 	private Matrix right;
 
-	private double ro, phi;
+	private double /*ro,*/ phi;
 	
 	private int moveForward, moveLeft;
 
@@ -17,7 +17,7 @@ public class Camera {
 		right = new Matrix(new double[][] { { -1, 0, 0, 1 } });
 		forward = new Matrix(new double[][] { { 0, 0, -1, 1 } });
 		glu = new GLU();
-		ro = phi = 0;
+		/*ro =*/ phi = 0;
 		moveForward = moveLeft = 0;
 	}
 
@@ -30,8 +30,7 @@ public class Camera {
 			position = position.minus(forward.times(back * moveForward));
 		
 		if (moveLeft != 0)
-			position = position.minus(right.times(-back * moveLeft));
-		
+			position = position.minus(right.times(back * moveLeft));
 		
 		Matrix position_forward = position.minus(forward);
 		glu.gluLookAt(position.Get(0, 0), position.Get(0, 1),
@@ -49,7 +48,7 @@ public class Camera {
 	private void LookUpDown(int px) {
 		float step = 0.01f * (float) px;
 
-		double halfPi = Math.PI / 4.0;
+		double halfPi = Math.PI / 2.0;
 
 		if (phi + step >= halfPi) {
 			step = (float) (halfPi - phi);
@@ -69,7 +68,7 @@ public class Camera {
 	private void LookLeftRight(int px) {
 		float step = 0.01f * (float) px;
 
-		double pi = Math.PI;
+		/*double pi = Math.PI;
 
 		if (ro + step > pi) {
 			step = (float) (pi - ro);
@@ -79,7 +78,7 @@ public class Camera {
 			ro = -pi;
 		} else {
 			ro += step;
-		}
+		}*/
 		right = Matrix.Rotate(step, up, right);
 		forward = Matrix.Rotate(step, up, forward);
 	}

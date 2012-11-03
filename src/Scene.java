@@ -34,36 +34,98 @@ public class Scene extends GLJPanel implements GLEventListener {
 		width = height = 600;
 	}
 
+	private void drawStation(GL2 gl) {
+
+		gl.glPushMatrix();
+		gl.glTranslatef(0, 0, 10);
+		gl.glScalef(10, 10, 10);
+		
+		gl.glRotatef(0, 0, 1, 0);
+		
+		drawFace(gl);
+		gl.glPopMatrix();
+		
+		gl.glPushMatrix();
+		gl.glTranslatef(0, 0, -10);
+		gl.glScalef(10, 10, 10);
+		gl.glRotatef(180, 0, 1, 0);
+		
+		drawFace(gl);
+		gl.glPopMatrix();
+		
+		/*gl.glPushMatrix();
+		gl.glScalef(10, 10, 1);
+		gl.glRotatef(180, 0, 1, 0);
+		gl.glTranslatef(0, 0, 10);
+		drawFace(gl);
+		gl.glPopMatrix();
+		
+		gl.glPushMatrix();
+		gl.glScalef(30, 10, 1);
+		gl.glRotatef(23, 0, 1, 0);
+		gl.glTranslatef(0, 0, 10);
+		drawFace(gl);
+		gl.glPopMatrix();*/
+
+		/*gl.glPushMatrix();
+		gl.glScalef(10, 10, 1);
+		gl.glTranslatef(0, 0, 20);
+		gl.glRotatef(180, 0, 1, 0);
+		drawFace(gl);
+		gl.glPopMatrix();*/
+		
+		/*gl.glPushMatrix();
+		gl.glScalef(10, 40, 1);
+		gl.glTranslatef(0, 0, 20);
+		
+		gl.glRotatef(90, 0, 1, 0);
+		drawFace(gl);
+		gl.glPopMatrix();*/
+
+		/*
+		 * gl.glColor3f(1, 0, 0); //gl.glNormal3f(arg0, arg1, arg2)
+		 * gl.glVertex3f(-1, 1, 1);
+		 * 
+		 * gl.glColor3f(0, 1, 0); gl.glVertex3f(1, 1, 1); gl.glColor3f(0, 0, 1);
+		 * gl.glVertex3f(1, -1, 1); gl.glColor3f(1, 1, 0); gl.glVertex3f(-1, -1,
+		 * 1);
+		 * 
+		 * gl.glColor3f(1, 0, 0); gl.glVertex3f(-1, 1, -1); gl.glColor3f(0, 1,
+		 * 0); gl.glVertex3f(1, 1, -1); gl.glColor3f(0, 0, 1); gl.glVertex3f(1,
+		 * -1, -1); gl.glColor3f(1, 1, 0); gl.glVertex3f(-1, -1, -1);
+		 */
+
+	}
+
+	private void drawFace(GL2 gl) {
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glColor3f(1, 0, 0);
+		gl.glNormal3f(0, 0, -1);
+		gl.glVertex3f(-1, 1, 0);
+
+		gl.glColor3f(1, 0, 0);
+		gl.glNormal3f(0, 0, -1);
+		gl.glVertex3f(1, 1, 0);
+
+		gl.glColor3f(1, 0, 0);
+		gl.glNormal3f(0, 0, -1);
+		gl.glVertex3f(1, 0, 0);
+
+		gl.glColor3f(1, 0, 0);
+		gl.glNormal3f(0, 0, -1);
+		gl.glVertex3f(-1, 0, 0);
+		gl.glEnd();
+	}
+
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glLoadIdentity();
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-		
+
 		camera.Update(animator.getLastFPSUpdateTime());
 
-		// glRotatef(angle, 0, 0, 1);
-		// Render colored quad
-		gl.glBegin(GL2.GL_QUADS);
-		gl.glColor3f(1, 0, 0);
-		gl.glVertex3f(-1, 1, 1);
-		gl.glColor3f(0, 1, 0);
-		gl.glVertex3f(1, 1, 1);
-		gl.glColor3f(0, 0, 1);
-		gl.glVertex3f(1, -1, 1);
-		gl.glColor3f(1, 1, 0);
-		gl.glVertex3f(-1, -1, 1);
-
-		gl.glColor3f(1, 0, 0);
-		gl.glVertex3f(-1, 1, -1);
-		gl.glColor3f(0, 1, 0);
-		gl.glVertex3f(1, 1, -1);
-		gl.glColor3f(0, 0, 1);
-		gl.glVertex3f(1, -1, -1);
-		gl.glColor3f(1, 1, 000);
-		gl.glVertex3f(-1, -1, -1);
-		gl.glEnd();
-		// Swap buffers (color buffers, makes previous render visible)
+		drawStation(gl);
 
 		gl.glFlush();
 	}
@@ -78,18 +140,42 @@ public class Scene extends GLJPanel implements GLEventListener {
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glEnable(GL2.GL_DEPTH_TEST);
-		// gl.glEnable(GL2.GL_LIGHTING);
 		// gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
-		// gl.glEnable(GL2.GL_CULL_FACE);
-		// gl.glEnable(GL.GL_NORMALIZE);
-		// gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
+		//gl.glEnable(GL2.GL_CULL_FACE);
+		gl.glEnable(GL2.GL_NORMALIZE);
+		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
 
+		float SHINE_ALL_DIRECTIONS = 1;
+		float[] lightPos = { 0, 0, 0.5f, SHINE_ALL_DIRECTIONS };
+		float[] lightColorAmbient = { 0.2f, 0.2f, 0.2f, 1f };
+		float[] lightColorSpecular = { 0.8f, 0.8f, 0.8f, 1f };
+
+		// Set light parameters.
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPos, 0);
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightColorAmbient, 0);
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightColorSpecular, 0);
+
+		gl.glShadeModel(GL2.GL_SMOOTH);
+
+		gl.glEnable(GL2.GL_LIGHT1);
+		gl.glEnable(GL2.GL_LIGHTING);
+		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+
+		float[] rgba = { 0.5f, 0.5f, 0.5f };
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, rgba, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE,
+				new float[] { 0.9f, 0, 0 }, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, new float[] { 0.0f,
+				0.9f, 0 }, 0);
+		gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, 55.5f);
+
 		// gl.glOrtho(-10, 10 ,-10, 10, 0.001,100);
-		glu.gluPerspective(100, (double) getWidth() / getHeight(), 0.3, 50);
+		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 
 	}

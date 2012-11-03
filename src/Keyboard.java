@@ -7,12 +7,10 @@ public class Keyboard implements KeyListener {
 	private Scene scene;
 
 	public Keyboard(Scene scene) {
-		// TODO Auto-generated constructor stub
 		this.scene = scene;
 	}
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_W:
 			scene.camera.MoveForward(1);
@@ -37,7 +35,6 @@ public class Keyboard implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_W:
 			scene.camera.MoveForward(0);
@@ -62,7 +59,6 @@ public class Keyboard implements KeyListener {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
