@@ -1,11 +1,3 @@
-import java.awt.AWTEvent;
-import java.awt.Event;
-import java.awt.Frame;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -14,7 +6,7 @@ import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.gl2.GLUT;
+
 
 @SuppressWarnings("serial")
 public class Scene extends GLJPanel implements GLEventListener {
@@ -24,6 +16,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private FPSAnimator animator;
 	public Camera camera;
 
+
 	public Scene() {
 		// TODO Auto-generated constructor stub
 		setFocusable(true);
@@ -31,84 +24,9 @@ public class Scene extends GLJPanel implements GLEventListener {
 		animator = new FPSAnimator(this, 30, false);
 		animator.start();
 		camera = new Camera();
-		width = height = 600;
+		width = height = 800;
 	}
 
-	private void drawExterior(GL2 gl) {
-		// back
-		gl.glPushMatrix();
-		gl.glScalef(10, 10, 10);
-		gl.glTranslatef(0, 0, 2);
-
-		gl.glRotatef(0, 0, 1, 0);
-		drawFace(gl);
-		gl.glPopMatrix();
-
-		// front
-		gl.glPushMatrix();
-		gl.glScalef(10, 10, 10);
-		gl.glTranslatef(0, 0, -2);
-		gl.glRotatef(180, 0, 1, 0);
-		drawFace(gl);
-		gl.glPopMatrix();
-
-		// left
-		gl.glPushMatrix();
-		gl.glScalef(10, 10, 20);
-		gl.glTranslatef(1, 0, 0);
-
-		gl.glRotatef(90, 0, 1, 0);
-		drawFace(gl);
-		gl.glPopMatrix();
-
-		// right
-		gl.glPushMatrix();
-		gl.glScalef(10, 10, 20);
-		gl.glTranslatef(-1, 0, 0);
-		gl.glRotatef(-90, 0, 1, 0);
-		drawFace(gl);
-		gl.glPopMatrix();
-
-		// down
-		gl.glPushMatrix();
-		// gl.glTranslatef(0, 0, -20);
-		gl.glScalef(10, 1, 40);
-		gl.glRotatef(90, 1, 0, 0);
-		gl.glTranslatef(0, -0.5f, 0.0f);
-
-		drawFace(gl);
-		gl.glPopMatrix();
-
-		// up
-		gl.glPushMatrix();
-		gl.glTranslatef(0, 10, 20);
-		gl.glRotatef(-90, 1, 0, 0);
-		// gl.glTranslatef(-10, 0, 0);
-		gl.glScalef(10, 40, 1);
-
-		// == drawFace(gl);
-		gl.glPopMatrix();
-	}
-
-	private void drawFace(GL2 gl) {
-		gl.glBegin(GL2.GL_QUADS);
-		gl.glColor3f(1, 0, 0);
-		gl.glNormal3f(0, 0, -1);
-		gl.glVertex3f(-1, 1, 0);
-
-		gl.glColor3f(1, 0, 0);
-		gl.glNormal3f(0, 0, -1);
-		gl.glVertex3f(1, 1, 0);
-
-		gl.glColor3f(1, 0, 0);
-		gl.glNormal3f(0, 0, -1);
-		gl.glVertex3f(1, 0, 0);
-
-		gl.glColor3f(1, 0, 0);
-		gl.glNormal3f(0, 0, -1);
-		gl.glVertex3f(-1, 0, 0);
-		gl.glEnd();
-	}
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
@@ -118,39 +36,13 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		camera.Update(animator.getLastFPSUpdateTime());
 
-		drawExterior(gl);
-		drawInterior(gl);
+		Station.drawExterior(gl);
+		Station.drawInterior(gl);
+		for (int i = -2; i<= 2; i++)
+			Column.draw(gl, 0, 0, 7*(float)i);
+		// drawBin(gl, 4, 0, -1);
 
 		gl.glFlush();
-	}
-
-	private void drawInterior(GL2 gl) {
-		// down
-		gl.glPushMatrix();
-		gl.glTranslatef(0, 2.5f, 0.0f);
-		// gl.glTranslatef(0, 0, -20);
-		gl.glScalef(5, 1, 40);
-		gl.glRotatef(90, 1, 0, 0);
-		gl.glTranslatef(0, -0.5f, 0.0f);
-		drawFace(gl);
-		gl.glPopMatrix();
-
-		// left
-		gl.glPushMatrix();
-		gl.glScalef(10, 2.5f, 20);
-		gl.glTranslatef(0.5f, 0, 0);
-		gl.glRotatef(-90, 0, 1, 0);
-		drawFace(gl);
-		gl.glPopMatrix();
-
-		// left
-		gl.glPushMatrix();
-		gl.glScalef(10, 2.5f, 20);
-		gl.glTranslatef(-0.5f, 0, 0);
-
-		gl.glRotatef(90, 0, 1, 0);
-		drawFace(gl);
-		gl.glPopMatrix();
 	}
 
 	@Override
@@ -163,15 +55,26 @@ public class Scene extends GLJPanel implements GLEventListener {
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glEnable(GL2.GL_DEPTH_TEST);
-		// gl.glShadeModel(GL2.GL_SMOOTH);
+		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 		// gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glEnable(GL2.GL_NORMALIZE);
-		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glEnable(GL2.GL_LIGHTING);
+		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
 
+		setGlobalLight(gl);
+
+		// gl.glOrtho(-10, 10 ,-10, 10, 0.001,100);
+		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+
+	}
+
+
+	private void setGlobalLight(GL2 gl) {
 		float SHINE_ALL_DIRECTIONS = 1;
 		float[] lightPos = { 0, 0, 0.5f, SHINE_ALL_DIRECTIONS };
 		float[] lightColorAmbient = { 0.2f, 0.2f, 0.2f, 1f };
@@ -182,25 +85,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightColorAmbient, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightColorSpecular, 0);
-
-		gl.glShadeModel(GL2.GL_SMOOTH);
-
 		gl.glEnable(GL2.GL_LIGHT1);
-		gl.glEnable(GL2.GL_LIGHTING);
-		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
-
-		float[] rgba = { 0.5f, 0.5f, 0.5f };
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, rgba, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE,
-				new float[] { 0.9f, 0, 0 }, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, new float[] { 0.0f,
-				0.9f, 0 }, 0);
-		gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, 55.5f);
-
-		// gl.glOrtho(-10, 10 ,-10, 10, 0.001,100);
-		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
-
 	}
 
 	@Override
@@ -230,14 +115,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 		window.setVisible(true);
 		scene.BindMouseKeyboard();
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		/*
-		 * double[][] m_arr = {{1,0}, {0,2}}; Matrix m = new Matrix(m_arr);
-		 * //m.show(); double[][] v_arr = {{1,2}}; Matrix v = new Matrix(v_arr);
-		 * //v.show();
-		 * 
-		 * (v.times(m)).show();
-		 */
 	}
 
 	private void BindMouseKeyboard() {
