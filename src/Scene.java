@@ -87,39 +87,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		drawFace(gl);
 		gl.glPopMatrix();
-
-		/*
-		 * gl.glPushMatrix(); gl.glScalef(10, 10, 1); gl.glRotatef(180, 0, 1,
-		 * 0); gl.glTranslatef(0, 0, 10); drawFace(gl); gl.glPopMatrix();
-		 * 
-		 * gl.glPushMatrix(); gl.glScalef(30, 10, 1); gl.glRotatef(23, 0, 1, 0);
-		 * gl.glTranslatef(0, 0, 10); drawFace(gl); gl.glPopMatrix();
-		 */
-
-		/*
-		 * gl.glPushMatrix(); gl.glScalef(10, 10, 1); gl.glTranslatef(0, 0, 20);
-		 * gl.glRotatef(180, 0, 1, 0); drawFace(gl); gl.glPopMatrix();
-		 */
-
-		/*
-		 * gl.glPushMatrix(); gl.glScalef(10, 40, 1); gl.glTranslatef(0, 0, 20);
-		 * 
-		 * gl.glRotatef(90, 0, 1, 0); drawFace(gl); gl.glPopMatrix();
-		 */
-
-		/*
-		 * gl.glColor3f(1, 0, 0); //gl.glNormal3f(arg0, arg1, arg2)
-		 * gl.glVertex3f(-1, 1, 1);
-		 * 
-		 * gl.glColor3f(0, 1, 0); gl.glVertex3f(1, 1, 1); gl.glColor3f(0, 0, 1);
-		 * gl.glVertex3f(1, -1, 1); gl.glColor3f(1, 1, 0); gl.glVertex3f(-1, -1,
-		 * 1);
-		 * 
-		 * gl.glColor3f(1, 0, 0); gl.glVertex3f(-1, 1, -1); gl.glColor3f(0, 1,
-		 * 0); gl.glVertex3f(1, 1, -1); gl.glColor3f(0, 0, 1); gl.glVertex3f(1,
-		 * -1, -1); gl.glColor3f(1, 1, 0); gl.glVertex3f(-1, -1, -1);
-		 */
-
 	}
 
 	private void drawFace(GL2 gl) {
