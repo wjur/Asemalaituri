@@ -34,46 +34,47 @@ public class Scene extends GLJPanel implements GLEventListener {
 		width = height = 600;
 	}
 
-	private void drawStation(GL2 gl) {
-
+	private void drawExterior(GL2 gl) {
 		// back
 		gl.glPushMatrix();
-		gl.glTranslatef(0, 0, 20);
 		gl.glScalef(10, 10, 10);
+		gl.glTranslatef(0, 0, 2);
+
 		gl.glRotatef(0, 0, 1, 0);
 		drawFace(gl);
 		gl.glPopMatrix();
 
 		// front
 		gl.glPushMatrix();
-		gl.glTranslatef(0, 0, -20);
 		gl.glScalef(10, 10, 10);
+		gl.glTranslatef(0, 0, -2);
 		gl.glRotatef(180, 0, 1, 0);
 		drawFace(gl);
 		gl.glPopMatrix();
 
 		// left
 		gl.glPushMatrix();
-		gl.glTranslatef(10, 0, 0);
 		gl.glScalef(10, 10, 20);
+		gl.glTranslatef(1, 0, 0);
+
 		gl.glRotatef(90, 0, 1, 0);
 		drawFace(gl);
 		gl.glPopMatrix();
 
 		// right
 		gl.glPushMatrix();
-		gl.glTranslatef(-10, 0, 0);
 		gl.glScalef(10, 10, 20);
+		gl.glTranslatef(-1, 0, 0);
 		gl.glRotatef(-90, 0, 1, 0);
 		drawFace(gl);
 		gl.glPopMatrix();
 
 		// down
 		gl.glPushMatrix();
-		gl.glTranslatef(0, 0, -20);
+		// gl.glTranslatef(0, 0, -20);
+		gl.glScalef(10, 1, 40);
 		gl.glRotatef(90, 1, 0, 0);
-		// gl.glTranslatef(-10, 0, 0);
-		gl.glScalef(10, 40, 1);
+		gl.glTranslatef(0, -0.5f, 0.0f);
 
 		drawFace(gl);
 		gl.glPopMatrix();
@@ -85,7 +86,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		// gl.glTranslatef(-10, 0, 0);
 		gl.glScalef(10, 40, 1);
 
-		drawFace(gl);
+		// == drawFace(gl);
 		gl.glPopMatrix();
 	}
 
@@ -117,9 +118,39 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		camera.Update(animator.getLastFPSUpdateTime());
 
-		drawStation(gl);
+		drawExterior(gl);
+		drawInterior(gl);
 
 		gl.glFlush();
+	}
+
+	private void drawInterior(GL2 gl) {
+		// down
+		gl.glPushMatrix();
+		gl.glTranslatef(0, 2.5f, 0.0f);
+		// gl.glTranslatef(0, 0, -20);
+		gl.glScalef(5, 1, 40);
+		gl.glRotatef(90, 1, 0, 0);
+		gl.glTranslatef(0, -0.5f, 0.0f);
+		drawFace(gl);
+		gl.glPopMatrix();
+
+		// left
+		gl.glPushMatrix();
+		gl.glScalef(10, 2.5f, 20);
+		gl.glTranslatef(0.5f, 0, 0);
+		gl.glRotatef(-90, 0, 1, 0);
+		drawFace(gl);
+		gl.glPopMatrix();
+
+		// left
+		gl.glPushMatrix();
+		gl.glScalef(10, 2.5f, 20);
+		gl.glTranslatef(-0.5f, 0, 0);
+
+		gl.glRotatef(90, 0, 1, 0);
+		drawFace(gl);
+		gl.glPopMatrix();
 	}
 
 	@Override
@@ -156,7 +187,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		gl.glEnable(GL2.GL_LIGHT1);
 		gl.glEnable(GL2.GL_LIGHTING);
-		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 
 		float[] rgba = { 0.5f, 0.5f, 0.5f };
 		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, rgba, 0);
