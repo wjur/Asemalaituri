@@ -15,6 +15,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private static int height;
 	private FPSAnimator animator;
 	public Camera camera;
+	private GL2 gl;
+	private ModelLoaderOBJ mld;
 
 
 	public Scene() {
@@ -25,6 +27,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		animator.start();
 		camera = new Camera();
 		width = height = 800;
+		
 	}
 
 
@@ -36,12 +39,17 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		camera.Update(animator.getLastFPSUpdateTime());
 
-		Station.drawExterior(gl);
+		/*Station.drawExterior(gl);
 		Station.drawInterior(gl);
 		for (int i = -2; i<= 2; i++)
 			Column.draw(gl, 0, 0, 7*(float)i);
 		// drawBin(gl, 4, 0, -1);
-
+		*/
+		setGlobalLight(gl);
+		gl.glPushMatrix();
+		gl.glScalef(100, 100, 100);
+		mld.draw(gl);
+		gl.glPopMatrix();
 		gl.glFlush();
 	}
 
@@ -53,19 +61,30 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
+		
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
-		// gl.glEnable(GL2.GL_CULL_FACE);
+		gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glEnable(GL2.GL_NORMALIZE);
+		
+		
 		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glLoadIdentity();
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glLoadIdentity();
+		
 		gl.glEnable(GL2.GL_LIGHTING);
 		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
+		
+		this.gl = gl;
+		mld = new ModelLoaderOBJ();
+		mld.init(gl);
 
-		setGlobalLight(gl);
+		
 
 		// gl.glOrtho(-10, 10 ,-10, 10, 0.001,100);
 		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
@@ -76,14 +95,14 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	private void setGlobalLight(GL2 gl) {
 		float SHINE_ALL_DIRECTIONS = 1;
-		float[] lightPos = { 0, 0, 0.5f, SHINE_ALL_DIRECTIONS };
+		float[] lightPos = { -30, 30, 30.5f, SHINE_ALL_DIRECTIONS };
 		float[] lightColorAmbient = { 0.2f, 0.2f, 0.2f, 1f };
 		float[] lightColorSpecular = { 0.8f, 0.8f, 0.8f, 1f };
 
 		// Set light parameters.
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPos, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightColorAmbient, 0);
-		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
+		//gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightColorSpecular, 0);
 		gl.glEnable(GL2.GL_LIGHT1);
 	}
