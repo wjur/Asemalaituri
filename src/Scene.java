@@ -59,14 +59,100 @@ public class Scene extends GLJPanel implements GLEventListener {
 		for (int i = -2; i<= 3; i++)
 				drawLamp(gl, 2.35f*(float)i - 2.35f/2.0f , 0, 0);
 		
-		/*gl.glPushMatrix();
-		gl.glScalef(100, 100, 100);
-		gl.glRotatef(90, 0, 1, 0);
-		spotModel.opengldraw(gl);// .draw(gl);
-		gl.glPopMatrix();*/
+
+		drawSpotA(gl, 4.5f, 0, 0, -90, totalms);
+		drawSpotB(gl, 3, 0, 0, -135, totalms);
 		
 		
 		gl.glFlush();
+	}
+	
+	private void drawSpotA(GL2 gl, float x, float y, float z, float angle, long ms)
+	{
+		float f1 = Math.abs((float)(Math.cos(ms*0.0000001f/(10*3.14))));
+		gl.glPushMatrix();
+		gl.glTranslatef(0+x, 3.6f+y, 0+z);
+		gl.glScalef(40, 40, 40);
+		gl.glRotatef(angle, 0, 1, 0);
+		float SHINE_ALL_DIRECTIONS = 1;
+		float[] lightPos = { 0,0.0235f,0.01f, SHINE_ALL_DIRECTIONS };
+		float[] lightDir = { 0,0,1 , SHINE_ALL_DIRECTIONS };
+		
+		/*
+		//debug :)
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glColor3f(1, 0, 0);
+		gl.glNormal3f(0, 0, -1);
+		gl.glVertex3f(-0.01f, 0.0335f, 0.01f);
+
+		gl.glColor3f(1, 0, 0);
+		gl.glNormal3f(0, 0, -1);
+		gl.glVertex3f(0.01f, 0.0335f, 0.01f);
+
+		gl.glColor3f(1, 0, 0);
+		gl.glNormal3f(0, 0, -1);
+		gl.glVertex3f(0.01f, 0.0135f, 0.01f);
+
+		gl.glColor3f(1, 0, 0);
+		gl.glNormal3f(0, 0, -1);
+		gl.glVertex3f(-0.01f, 0.0135f, 0.01f);
+		gl.glEnd();
+		*/
+		
+		
+		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
+		float[] lightColorSpecular = { 1f, 0.5f, 1f, 1f };
+
+		// Set light parameters.
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, lightPos, 0);
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_SPOT_DIRECTION, lightDir, 0);
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_AMBIENT, lightColorAmbient, 0);
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_SPECULAR, lightColorSpecular, 0);
+		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, lightColorSpecular, 0);
+		gl.glLightf(GL2.GL_LIGHT4, GL2.GL_LINEAR_ATTENUATION, 0.05f);
+		gl.glLightf(GL2.GL_LIGHT4, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
+		gl.glLightf(GL2.GL_LIGHT4, GL2.GL_SPOT_CUTOFF, 60*f1);
+		gl.glEnable(GL2.GL_LIGHT4);
+		drawSpot(gl, x, y, z, angle);
+		
+		gl.glPopMatrix();
+	}
+	
+	private void drawSpotB(GL2 gl, float x, float y, float z, float angle, long ms)
+	{
+		float f1 = Math.abs((float)(Math.cos(ms*0.0000001f/(3*3.14))));
+		float f2 = Math.abs((float)(Math.cos(ms*0.0000001f/(5*3.14))));
+		gl.glPushMatrix();
+		gl.glTranslatef(0+x, 3.6f+y, 0+z);
+		gl.glScalef(40, 40, 40);
+		gl.glRotatef(angle, 0, 1, 0);
+		float SHINE_ALL_DIRECTIONS = 1;
+		float[] lightPos = { 0,0.0235f,0.01f, SHINE_ALL_DIRECTIONS };
+		float[] lightDir = { 0,0,1 , SHINE_ALL_DIRECTIONS };
+		
+		
+		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
+		float[] lightColorSpecular = { 0f, f1, (1-f1), 1f };
+
+		// Set light parameters.
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, lightPos, 0);
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_SPOT_DIRECTION, lightDir, 0);
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_AMBIENT, lightColorAmbient, 0);
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_SPECULAR, lightColorSpecular, 0);
+		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, lightColorSpecular, 0);
+		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_LINEAR_ATTENUATION, 0.05f);
+		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
+		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_SPOT_CUTOFF, 60-20*f2);
+		gl.glEnable(GL2.GL_LIGHT3);
+		drawSpot(gl, x, y, z, angle);
+		
+		gl.glPopMatrix();
+	}
+
+	private void drawSpot(GL2 gl, float x, float y, float z, float angle) {
+		
+		spotModel.opengldraw(gl);// .draw(gl);
+		
 	}
 
 	private void drawLamp(GL2 gl, float x, float y, float z) {
@@ -128,7 +214,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		
 		float SHINE_ALL_DIRECTIONS = 1;
 		float[] lightPos = { 0,5,11f, SHINE_ALL_DIRECTIONS };
-		float[] lightColorAmbient = { 0.2f, 0.2f, 0.2f, 1f };
+		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
 		float[] lightColorSpecular = { 0.7f*s, 0.7f*s, 0.9f*s, 1f };
 
 		// Set light parameters.
@@ -137,19 +223,19 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightColorSpecular, 0);
 		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_LINEAR_ATTENUATION, 0.05f);
-		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_QUADRATIC_ATTENUATION, 0.01f);
+		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
 		gl.glEnable(GL2.GL_LIGHT1);
 
 		float[] lightPos2 = { 0,5,-11f, SHINE_ALL_DIRECTIONS };
-		float[] lightColorAmbient2 = { 0.2f, 0.2f, 0.2f, 1f };
-		float[] lightColorSpecular2 = { 0.7f, 0.7f, 0.3f, 1f };
+		float[] lightColorAmbient2 = { 0.02f, 0.02f, 0.02f, 1f };
+		float[] lightColorSpecular2 = { 0.7f, 0.7f, 0.9f, 1f };
 		// Set light parameters.
 		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, lightPos2, 0);
 		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_AMBIENT, lightColorAmbient2, 0);
 		//gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
 		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lightColorSpecular2, 0);
 		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_LINEAR_ATTENUATION, 0.05f);
-		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_QUADRATIC_ATTENUATION, 0.01f);
+		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
 		gl.glEnable(GL2.GL_LIGHT2);
 	}
 

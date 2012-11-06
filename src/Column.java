@@ -67,10 +67,10 @@ public class Column {
 	static FloatBuffer colors_buffer = Buffers.newDirectFloatBuffer(colors1);
 	
 	public static void draw(GL2 gl, float x, float y, float z) {
-		float[] rgba = { 0.6f, 0.6f, 0.6f };
+		float[] rgba = { 0.1f, 0.1f, 0.1f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,
-				new float[] { 0.6f, 0.6f, 0.6f }, 0);
+				new float[] { 0.8f, 0.8f, 0.8f }, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] { 0.1f, 0.1f, 0.1f }, 0);
 		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 0.5f);
 			

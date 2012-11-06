@@ -25,7 +25,7 @@ public class Camera {
 		if (l > 2000)
 			l = 2000;
 		
-		float back = (float)l * 0.0005f;
+		float back = (float)l * 0.0003f;
 		if (moveForward != 0)
 			position = position.minus(forward.times(back * moveForward));
 		
