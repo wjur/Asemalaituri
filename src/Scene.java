@@ -1,3 +1,5 @@
+import java.util.Random;
+
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -18,6 +20,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	private GLModel spotModel = null;
 	private GLModel lampModel = null;
+	
+	private Random random;
+	
+	long totalms = 0;
 
 
 	public Scene() {
@@ -28,6 +34,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		animator.start();
 		camera = new Camera();
 		width = height = 800;
+		random = new Random();
 	}
 
 	@Override
@@ -36,8 +43,11 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLoadIdentity();
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
-		camera.Update(animator.getLastFPSUpdateTime());
-		setGlobalLight(gl);
+		long ms = animator.getLastFPSUpdateTime();
+		totalms += ms;
+		//System.out.println(totalms);
+		camera.Update(ms);
+		setGlobalLight(gl, totalms);
 		
 		Station.drawExterior(gl);
 		Station.drawInterior(gl);
@@ -110,18 +120,37 @@ public class Scene extends GLJPanel implements GLEventListener {
 	}
 
 
-	private void setGlobalLight(GL2 gl) {
+	private void setGlobalLight(GL2 gl, long ms) {
+		float f1 = (float)(Math.cos(ms*0.0000001f/(5*3.14)));
+		float f2 = (float)(Math.sin(ms*0.0000001f/(2*3.14)));
+		
+		float s = (f1 < 0 && f2 < 0) ? 1 : ((random.nextInt()%100 > 90) ? 1 : 0 );
+		
 		float SHINE_ALL_DIRECTIONS = 1;
-		float[] lightPos = { 0,0,0.5f, SHINE_ALL_DIRECTIONS };
+		float[] lightPos = { 0,5,11f, SHINE_ALL_DIRECTIONS };
 		float[] lightColorAmbient = { 0.2f, 0.2f, 0.2f, 1f };
-		float[] lightColorSpecular = { 0.8f, 0.8f, 0.8f, 1f };
+		float[] lightColorSpecular = { 0.7f*s, 0.7f*s, 0.9f*s, 1f };
 
 		// Set light parameters.
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPos, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightColorAmbient, 0);
 		//gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightColorSpecular, 0);
+		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_LINEAR_ATTENUATION, 0.05f);
+		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_QUADRATIC_ATTENUATION, 0.01f);
 		gl.glEnable(GL2.GL_LIGHT1);
+
+		float[] lightPos2 = { 0,5,-11f, SHINE_ALL_DIRECTIONS };
+		float[] lightColorAmbient2 = { 0.2f, 0.2f, 0.2f, 1f };
+		float[] lightColorSpecular2 = { 0.7f, 0.7f, 0.3f, 1f };
+		// Set light parameters.
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, lightPos2, 0);
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_AMBIENT, lightColorAmbient2, 0);
+		//gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lightColorSpecular2, 0);
+		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_LINEAR_ATTENUATION, 0.05f);
+		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_QUADRATIC_ATTENUATION, 0.01f);
+		gl.glEnable(GL2.GL_LIGHT2);
 	}
 
 	@Override
