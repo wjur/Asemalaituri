@@ -15,9 +15,9 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private static int height;
 	private FPSAnimator animator;
 	public Camera camera;
-	private GL2 gl;
-	//private ModelLoaderOBJ mld;
+
 	private GLModel spotModel = null;
+	private GLModel lampModel = null;
 
 
 	public Scene() {
@@ -28,9 +28,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		animator.start();
 		camera = new Camera();
 		width = height = 800;
-		
 	}
-
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
@@ -39,72 +37,82 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
 		camera.Update(animator.getLastFPSUpdateTime());
-
-		/*Station.drawExterior(gl);
+		setGlobalLight(gl);
+		
+		Station.drawExterior(gl);
 		Station.drawInterior(gl);
 		for (int i = -2; i<= 2; i++)
 			Column.draw(gl, 0, 0, 7*(float)i);
 		// drawBin(gl, 4, 0, -1);
-		*/
-		setGlobalLight(gl);
-		gl.glPushMatrix();
-		gl.glScalef(100, 100, 100);
-		spotModel.opengldraw(gl);// .draw(gl);
-		gl.glPopMatrix();
 		
-		gl.glPushMatrix();
+		
+		for (int i = -2; i<= 3; i++)
+				drawLamp(gl, 2.35f*(float)i - 2.35f/2.0f , 0, 0);
+		
+		/*gl.glPushMatrix();
 		gl.glScalef(100, 100, 100);
 		gl.glRotatef(90, 0, 1, 0);
 		spotModel.opengldraw(gl);// .draw(gl);
-		gl.glPopMatrix();
+		gl.glPopMatrix();*/
+		
 		
 		gl.glFlush();
+	}
+
+	private void drawLamp(GL2 gl, float x, float y, float z) {
+		gl.glPushMatrix();
+		gl.glScalef(3, 3, 3);
+		gl.glRotatef(90, 0, 1, 0);
+		gl.glTranslatef(0+x, 3+y, 0+z);
+		lampModel.opengldraw(gl);
+		gl.glPopMatrix();
 	}
 
 	@Override
 	public void dispose(GLAutoDrawable arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 		gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glEnable(GL2.GL_NORMALIZE);
-		
-		
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		
 		gl.glEnable(GL2.GL_LIGHTING);
 		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
-		
-		this.gl = gl;
-		//mld = new ModelLoaderOBJ();
-		//mld.init(gl);
-		spotModel = ModelLoaderOBJ.LoadModel("W:\\nauka\\msc\\gk\\asemalaituri\\spot.obj", "W:\\nauka\\msc\\gk\\asemalaituri\\spot.mtl", gl);
 
-		
+		if (false == loadModels(gl))
+		{
+			System.exit(1);
+		}
 
-		// gl.glOrtho(-10, 10 ,-10, 10, 0.001,100);
 		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
+	}
 
+	private Boolean loadModels(GL2 gl) {
+		spotModel = ModelLoaderOBJ.LoadModel("./models/spot.obj", "./models/spot.mtl", gl);
+		lampModel = ModelLoaderOBJ.LoadModel("./models/lamp.obj", "./models/lamp.mtl", gl);
+		if (spotModel == null || lampModel == null)
+		{
+			return false;
+		}
+		return true;
 	}
 
 
 	private void setGlobalLight(GL2 gl) {
 		float SHINE_ALL_DIRECTIONS = 1;
-		float[] lightPos = { -30, 30, 30.5f, SHINE_ALL_DIRECTIONS };
+		float[] lightPos = { 0,0,0.5f, SHINE_ALL_DIRECTIONS };
 		float[] lightColorAmbient = { 0.2f, 0.2f, 0.2f, 1f };
 		float[] lightColorSpecular = { 0.8f, 0.8f, 0.8f, 1f };
 
