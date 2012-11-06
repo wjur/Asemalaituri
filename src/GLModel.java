@@ -1,18 +1,7 @@
-
-
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-//import java.applet.*;
-//import java.awt.*;
-//import java.awt.event.*;
 import javax.media.opengl.*;
-import javax.media.opengl.glu.*;
-//import com.sun.opengl.util.*; // GLUT, FPSAnimator
-
-// import net.java.games.jogl.*;
-// import net.java.games.jogl.util.*;
 
 public class GLModel{
 
@@ -279,7 +268,7 @@ public class GLModel{
 			nextmat = Integer.parseInt(nextmatnamearray[1]);
 		}
 
-		gl.glNewList(objectlist,4864);
+		gl.glNewList(objectlist,GL2.GL_COMPILE);
 		for (int i=0;i<faces.size();i++) {
 			if (i == nextmat) {
 					gl.glEnable(GL2.GL_COLOR_MATERIAL);

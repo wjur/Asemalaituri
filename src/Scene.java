@@ -16,7 +16,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private FPSAnimator animator;
 	public Camera camera;
 	private GL2 gl;
-	private ModelLoaderOBJ mld;
+	//private ModelLoaderOBJ mld;
+	private GLModel spotModel = null;
 
 
 	public Scene() {
@@ -48,8 +49,15 @@ public class Scene extends GLJPanel implements GLEventListener {
 		setGlobalLight(gl);
 		gl.glPushMatrix();
 		gl.glScalef(100, 100, 100);
-		mld.draw(gl);
+		spotModel.opengldraw(gl);// .draw(gl);
 		gl.glPopMatrix();
+		
+		gl.glPushMatrix();
+		gl.glScalef(100, 100, 100);
+		gl.glRotatef(90, 0, 1, 0);
+		spotModel.opengldraw(gl);// .draw(gl);
+		gl.glPopMatrix();
+		
 		gl.glFlush();
 	}
 
@@ -81,8 +89,9 @@ public class Scene extends GLJPanel implements GLEventListener {
 		GLU glu = new GLU();
 		
 		this.gl = gl;
-		mld = new ModelLoaderOBJ();
-		mld.init(gl);
+		//mld = new ModelLoaderOBJ();
+		//mld.init(gl);
+		spotModel = ModelLoaderOBJ.LoadModel("W:\\nauka\\msc\\gk\\asemalaituri\\spot.obj", "W:\\nauka\\msc\\gk\\asemalaituri\\spot.mtl", gl);
 
 		
 

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 public class MtlLoader {
 	
 	public ArrayList Materials = new ArrayList();
-	//private TextureLoader textureloader;
 	
 	public class mtl {
 		public String name;
@@ -15,11 +14,9 @@ public class MtlLoader {
 		public float[] Ka = new float[3];
 		public float[] Kd = new float[3];
 		public float[] Ks = new float[3];
-		//public Texture texture = null;
 	}
 	
 	public MtlLoader(BufferedReader ref, String pathtoimages) {
-		//textureloader = new TextureLoader();
 		loadobject(ref, pathtoimages);
 		cleanup();
 	}
@@ -75,16 +72,6 @@ public class MtlLoader {
 		return returnfloat;
 	}
 	
-	/*public Texture getTexture(String namepass) {
-		Texture returntex = null;
-		for (int i=0; i < Materials.size(); i++) {
-			mtl tempmtl = (mtl)(Materials.get(i));
-			if (tempmtl.name.matches(namepass)) {
-				returntex = tempmtl.texture;
-			}
-		}
-		return returntex;
-	}*/
 
 	private void loadobject(BufferedReader br, String pathtoimages) {
 		int linecounter = 0;
@@ -112,11 +99,6 @@ public class MtlLoader {
 						matset.mtlnum = mtlcounter;
 						mtlcounter++;
 					}
-					/*if (newline.charAt(0) == 'm' && newline.charAt(1) == 'a' && newline.charAt(2) == 'p' && newline.charAt(3) == '_' && newline.charAt(4) == 'K' && newline.charAt(5) == 'd') {
-						String[] coordstext = new String[2];
-						coordstext = newline.split("\\s+");
-						matset.texture = textureloader.getTexture(pathtoimages + coordstext[1],false);
-					}*/
 					if (newline.charAt(0) == 'K' && newline.charAt(1) == 'a') {
 						float[] coords = new float[3];
 						String[] coordstext = new String[4];
@@ -155,12 +137,10 @@ public class MtlLoader {
 		}
 		catch (IOException e) {
 			System.out.println("Failed to read file: " + br.toString());
-			e.printStackTrace();
-			//System.exit(0);			
+			e.printStackTrace();		
 		}
 		catch (NumberFormatException e) {
 			System.out.println("Malformed MTL (on line " + linecounter + "): " + br.toString() + "\r \r" + e.getMessage());
-			//System.exit(0);
 		}
 		catch (StringIndexOutOfBoundsException e) {
 			System.out.println("Malformed MTL (on line " + linecounter + "): " + br.toString() + "\r \r" + e.getMessage());
