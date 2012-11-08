@@ -21,11 +21,9 @@ public class Camera {
 		moveForward = moveLeft = 0;
 	}
 
-	public void Update(long l) {
-		if (l > 2000)
-			l = 2000;
-		
-		float back = (float)l * 0.0003f;
+	public void Update(long miliseconds) {
+		System.out.println(miliseconds);
+		float back = (float)miliseconds * 0.00001f;
 		if (moveForward != 0)
 			position = position.minus(forward.times(back * moveForward));
 		
