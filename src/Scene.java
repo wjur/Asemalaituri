@@ -51,7 +51,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		lapsed /= 1000; // Can I haz milisecondz?
 		delta /= 1000;
 
-		System.out.println("*");
+		//System.out.println("*");
 		camera.Update(delta);
 		setGlobalLight(gl);
 
