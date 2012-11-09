@@ -26,73 +26,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	long startTime, lastTime;
 	long lapsed, delta;
-	
-	
-	
-	static final String vertexShader =
-			// For GLSL 1 and 1.1 code i highly recomend to not include a
-			// GLSL ES language #version line, GLSL ES section 3.4
-			// Many GPU drivers refuse to compile the shader if #version is different from
-			// the drivers internal GLSL version.
-			"#ifdef GL_ES \n" +
-			"precision mediump float; \n" + // Precision Qualifiers
-			"precision mediump int; \n" + // GLSL ES section 4.5.2
-			"#endif \n" +
-
-			"uniform mat4 uniform_Projection; \n" + // Incomming data used by
-			"attribute vec4 attribute_Position; \n" + // the vertex shader
-			"attribute vec4 attribute_Color; \n" + // uniform and attributes
-
-			"varying vec4 varying_Color; \n" + // Outgoing varying data
-			                                      // sent to the fragment shader
-			"void main(void) \n" +
-			"{ \n" +
-			" varying_Color = attribute_Color; \n" +
-			" //gl_Position = uniform_Projection * attribute_Position; \n" +
-			" gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n " +
-			"} ";
-
-			/* Introducing the OpenGL ES 2 Fragment shader
-			*
-			* The main loop of the fragment shader gets executed for each visible
-			* pixel fragment on the render buffer.
-			*
-			* vertex-> *
-			* (0,1,-1) /f\
-			* /ffF\ <- This fragment F gl_FragCoord get interpolated
-			* /fffff\ to (0.25,0.25,-1) based on the
-			* vertex-> *fffffff* <-vertex three vertex gl_Position.
-			* (-1,-1,-1) (1,-1,-1)
-			*
-			*
-			* All incomming "varying" and gl_FragCoord data to the fragment shader
-			* gets interpolated based on the vertex positions.
-			*
-			* The fragment shader produce and store the final color data output into
-			* gl_FragColor.
-			*
-			* Is up to you to set the final colors and calculate lightning here based on
-			* supplied position, color and normal data.
-			*
-			* The whole fragment shader program are a String containing GLSL ES language
-			* http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf
-			* sent to the GPU driver for compilation.
-			*/
-			static final String fragmentShader =
-				"#ifdef GL_ES \n" +
-				"precision mediump float; \n" +
-				"precision mediump int; \n" +
-				"#endif \n" +
-				
-				"varying vec4 varying_Color; \n" + //incomming varying data to the
-				                                        //frament shader
-				                                        //sent from the vertex shader
-				"void main (void) \n" +
-				"{ \n" +
-				" gl_FragColor = varying_Color; \n" +
-				" gl_FragColor = vec4(0.5, 0.0, 1.0, 1.0);\n" +
-				"} ";
-	
 
 	public Scene() {
 		setFocusable(true);
@@ -169,18 +102,18 @@ public class Scene extends GLJPanel implements GLEventListener {
 		 */
 
 		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
-		float[] lightColorSpecular = { 1f, 0.5f, 1f, 1f };
+		float[] lightColorSpecular = { 1f, 0.5f, 1f, 0.3f };
 
 		// Set light parameters.
-		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, lightPos, 0);
-		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_SPOT_DIRECTION, lightDir, 0);
-		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_AMBIENT, lightColorAmbient, 0);
-		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_SPECULAR, lightColorSpecular, 0);
-		gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, lightColorSpecular, 0);
-		gl.glLightf(GL2.GL_LIGHT4, GL2.GL_LINEAR_ATTENUATION, 0.05f);
-		gl.glLightf(GL2.GL_LIGHT4, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
-		gl.glLightf(GL2.GL_LIGHT4, GL2.GL_SPOT_CUTOFF, 60 * f1);
-		gl.glEnable(GL2.GL_LIGHT4);
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, lightPos, 0);
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_SPOT_DIRECTION, lightDir, 0);
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_AMBIENT, lightColorAmbient, 0);
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_SPECULAR, lightColorSpecular, 0);
+		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lightColorSpecular, 0);
+		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_LINEAR_ATTENUATION, 0.05f);
+		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
+		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_SPOT_CUTOFF, 60 * f1);
+		gl.glEnable(GL2.GL_LIGHT2);
 		drawSpot(gl, x, y, z, angle);
 
 		gl.glPopMatrix();
@@ -370,29 +303,31 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		float SHINE_ALL_DIRECTIONS = 1;
 		float[] lightPos = { 0, 5, 11f, SHINE_ALL_DIRECTIONS };
-		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
-		float[] lightColorSpecular = { 0.7f * s, 0.7f * s, 0.9f * s, 1f };
+		float[] lightColorAmbient = { 0, 0, 0, 1f };
+		float[] lightColorDiffuse = { 0.9f*s, 0.9f*s, 0.9f*s, 1.0f };
+		float[] lightColorSpecular = { 0.9f*s,0.9f*s,0.9f*s, 1f };
 
 		// Set light parameters.
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPos, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightColorAmbient, 0);
-		// gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
-		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightColorSpecular, 0);
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
+		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightColorDiffuse, 0);
 		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_LINEAR_ATTENUATION, 0.05f);
 		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
-		gl.glEnable(GL2.GL_LIGHT1);
+		//gl.glEnable(GL2.GL_LIGHT1);
 
-		float[] lightPos2 = { 0, 5, -11f, SHINE_ALL_DIRECTIONS };
-		float[] lightColorAmbient2 = { 0.02f, 0.02f, 0.02f, 1f };
-		float[] lightColorSpecular2 = { 0.7f, 0.7f, 0.9f, 1f };
+		float[] lightPos2 = { 0, 5, -11f, 1 };
+		float[] lightColorAmbient2 = { 0.01f, 0.01f, 0.01f, 1f };
+		float[] lightColorDiffuse2 = { 0.9f, 0.9f, 0.9f, 1.0f };
+		float[] lightColorSpecular2 = { 0.9f,0.9f,0.9f, 1f };
 		// Set light parameters.
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, lightPos2, 0);
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_AMBIENT, lightColorAmbient2, 0);
-		// gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lightColorSpecular2, 0);
-		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_LINEAR_ATTENUATION, 0.05f);
-		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
-		gl.glEnable(GL2.GL_LIGHT2);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPos2, 0);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightColorAmbient2, 0);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, lightColorSpecular2, 0);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lightColorDiffuse2, 0);
+		gl.glLightf(GL2.GL_LIGHT0, GL2.GL_LINEAR_ATTENUATION, 0.005f);
+		gl.glLightf(GL2.GL_LIGHT0, GL2.GL_QUADRATIC_ATTENUATION, 0.02f);
+		gl.glEnable(GL2.GL_LIGHT0);
 	}
 
 	@Override

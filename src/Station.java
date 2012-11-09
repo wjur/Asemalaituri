@@ -24,13 +24,13 @@ public class Station {
 	}
 	
 	public static void drawExterior(GL2 gl) {
-		float[] rgba = { 0.62f, 0.62f, 0.642f };
+		float[] rgba = { 0.02f, 0.02f, 0.02f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,
 				new float[] { 0.2f, 0.2f, 0.6f }, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] { 0.1f,
-				0.1f, 0.1f }, 0);
-		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 1.5f);
+				0.1f, 1f }, 0);
+		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 1.0f);
 		
 		
 		// back
@@ -93,8 +93,8 @@ public class Station {
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,
 				new float[] { 0.6f, 0.6f, 0.4f }, 0);
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] { 0.6f, 0.6f, 0.4f }, 0);
-		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 1.5f);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] { 0.3f, 0.3f, 0.1f }, 0);
+		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 5.5f);
 		
 		// down
 		gl.glPushMatrix();

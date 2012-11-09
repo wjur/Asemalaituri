@@ -1,16 +1,22 @@
-#ifdef GL_ES
-precision mediump float;
-precision mediump int;
-#endif
-uniform mat4 uniform_Projection;
-attribute vec4 attribute_Position;
-attribute vec4 attribute_Color;
+varying vec3 normal, eyeVec, ld[4];
+varying float att[4];
 
-varying vec4 varying_Color;
+void main()
+{	
+	normal = gl_NormalMatrix * gl_Normal;
 
-void main(void)
-{ 
-varying_Color = attribute_Color;
-//gl_Position = uniform_Projection * attribute_Position;
-gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-} 
+	vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
+	
+	for (int i=0; i<4; i++)
+	{
+		ld[i] = vec3(gl_LightSource[i].position.xyz - vVertex);
+		float d = length(ld[i]);
+		att[i] = 1.0 / ( gl_LightSource[i].constantAttenuation + 
+		(gl_LightSource[i].linearAttenuation*d) + 
+		(gl_LightSource[i].quadraticAttenuation*d*d) );
+	}
+	
+	eyeVec = -vVertex;
+
+	gl_Position = ftransform();		
+}
