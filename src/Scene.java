@@ -24,6 +24,73 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	long startTime, lastTime;
 	long lapsed, delta;
+	
+	
+	
+	static final String vertexShader =
+			// For GLSL 1 and 1.1 code i highly recomend to not include a
+			// GLSL ES language #version line, GLSL ES section 3.4
+			// Many GPU drivers refuse to compile the shader if #version is different from
+			// the drivers internal GLSL version.
+			"#ifdef GL_ES \n" +
+			"precision mediump float; \n" + // Precision Qualifiers
+			"precision mediump int; \n" + // GLSL ES section 4.5.2
+			"#endif \n" +
+
+			"uniform mat4 uniform_Projection; \n" + // Incomming data used by
+			"attribute vec4 attribute_Position; \n" + // the vertex shader
+			"attribute vec4 attribute_Color; \n" + // uniform and attributes
+
+			"varying vec4 varying_Color; \n" + // Outgoing varying data
+			                                      // sent to the fragment shader
+			"void main(void) \n" +
+			"{ \n" +
+			" varying_Color = attribute_Color; \n" +
+			" //gl_Position = uniform_Projection * attribute_Position; \n" +
+			" gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n " +
+			"} ";
+
+			/* Introducing the OpenGL ES 2 Fragment shader
+			*
+			* The main loop of the fragment shader gets executed for each visible
+			* pixel fragment on the render buffer.
+			*
+			* vertex-> *
+			* (0,1,-1) /f\
+			* /ffF\ <- This fragment F gl_FragCoord get interpolated
+			* /fffff\ to (0.25,0.25,-1) based on the
+			* vertex-> *fffffff* <-vertex three vertex gl_Position.
+			* (-1,-1,-1) (1,-1,-1)
+			*
+			*
+			* All incomming "varying" and gl_FragCoord data to the fragment shader
+			* gets interpolated based on the vertex positions.
+			*
+			* The fragment shader produce and store the final color data output into
+			* gl_FragColor.
+			*
+			* Is up to you to set the final colors and calculate lightning here based on
+			* supplied position, color and normal data.
+			*
+			* The whole fragment shader program are a String containing GLSL ES language
+			* http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf
+			* sent to the GPU driver for compilation.
+			*/
+			static final String fragmentShader =
+			"#ifdef GL_ES \n" +
+			"precision mediump float; \n" +
+			"precision mediump int; \n" +
+			"#endif \n" +
+
+			"varying vec4 varying_Color; \n" + //incomming varying data to the
+			                                        //frament shader
+			                                        //sent from the vertex shader
+			"void main (void) \n" +
+			"{ \n" +
+			" gl_FragColor = varying_Color; \n" +
+			" gl_FragColor = vec4(0.5, 0.0, 1.0, 1.0);\n" +
+			"} ";
+	
 
 	public Scene() {
 		setFocusable(true);
@@ -179,7 +246,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLoadIdentity();
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		gl.glEnable(GL2.GL_LIGHTING);
+		//gl.glEnable(GL2.GL_LIGHTING);
 		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
@@ -190,6 +257,74 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		
+		
+		
+		
+		setShaders(gl);
+		
+	}
+
+	private void setShaders(GL2 gl) {
+		//Create shaders
+        //OpenGL ES retuns a index id to be stored for future reference.
+        int vertShader = gl.glCreateShader(GL2.GL_VERTEX_SHADER);
+        int fragShader = gl.glCreateShader(GL2.GL_FRAGMENT_SHADER);
+
+        //Compile the vertexShader String into a program.
+        String[] vlines = new String[] { vertexShader };
+        int[] vlengths = new int[] { vlines[0].length() };
+        gl.glShaderSource(vertShader, vlines.length, vlines, vlengths, 0);
+        gl.glCompileShader(vertShader);
+
+        //Check compile status.
+        int[] compiled = new int[1];
+        gl.glGetShaderiv(vertShader, GL2.GL_COMPILE_STATUS, compiled,0);
+        if(compiled[0]!=0){System.out.println("Horray! vertex shader compiled");}
+        else {
+            int[] logLength = new int[1];
+            gl.glGetShaderiv(vertShader, GL2.GL_INFO_LOG_LENGTH, logLength, 0);
+
+            byte[] log = new byte[logLength[0]];
+            gl.glGetShaderInfoLog(vertShader, logLength[0], (int[])null, 0, log, 0);
+
+            System.err.println("Error compiling the vertex shader: " + new String(log));
+            System.exit(1);
+        }
+
+        //Compile the fragmentShader String into a program.
+        String[] flines = new String[] { fragmentShader };
+        int[] flengths = new int[] { flines[0].length() };
+        gl.glShaderSource(fragShader, flines.length, flines, flengths, 0);
+        gl.glCompileShader(fragShader);
+
+        //Check compile status.
+        gl.glGetShaderiv(fragShader, GL2.GL_COMPILE_STATUS, compiled,0);
+        if(compiled[0]!=0){System.out.println("Horray! fragment shader compiled");}
+        else {
+            int[] logLength = new int[1];
+            gl.glGetShaderiv(fragShader, GL2.GL_INFO_LOG_LENGTH, logLength, 0);
+
+            byte[] log = new byte[logLength[0]];
+            gl.glGetShaderInfoLog(fragShader, logLength[0], (int[])null, 0, log, 0);
+
+            System.err.println("Error compiling the fragment shader: " + new String(log));
+            System.exit(1);
+        }
+
+        //Each shaderProgram must have
+        //one vertex shader and one fragment shader.
+        int shaderProgram = gl.glCreateProgram();
+        gl.glAttachShader(shaderProgram, vertShader);
+        gl.glAttachShader(shaderProgram, fragShader);
+
+        //Associate attribute ids with the attribute names inside
+        //the vertex shader.
+        //gl.glBindAttribLocation(shaderProgram, 0, "attribute_Position");
+        //gl.glBindAttribLocation(shaderProgram, 1, "attribute_Color");
+
+        gl.glLinkProgram(shaderProgram);
+        gl.glUseProgram(shaderProgram);
 	}
 
 	private Boolean loadModels(GL2 gl) {
