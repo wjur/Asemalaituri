@@ -48,7 +48,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 			delta = 50000000;
 		lastTime = now;
 		lapsed = now - startTime;
-		lapsed /= 1000; // Can I haz milisecondz?
+		lapsed /= 1000; // Can I haz milisecondz? 
 		delta /= 1000;
 
 		//System.out.println("*");
