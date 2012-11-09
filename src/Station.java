@@ -1,8 +1,7 @@
 import javax.media.opengl.GL2;
 
-
 public class Station {
-	
+
 	public static void drawFace(GL2 gl) {
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glColor3f(1, 0, 0);
@@ -22,17 +21,16 @@ public class Station {
 		gl.glVertex3f(-1, 0, 0);
 		gl.glEnd();
 	}
-	
+
 	public static void drawExterior(GL2 gl) {
 		float[] rgba = { 0.02f, 0.02f, 0.02f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,
-				new float[] { 0.2f, 0.2f, 0.6f }, 0);
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] { 0.1f,
-				0.1f, 1f }, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, new float[] {
+				0.4f, 0.4f, 0.4f }, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] {
+				0.4f, 0.4f, 0.4f }, 0);
 		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 1.0f);
-		
-		
+
 		// back
 		gl.glPushMatrix();
 		gl.glScalef(10, 10, 10);
@@ -84,18 +82,19 @@ public class Station {
 		// gl.glTranslatef(-10, 0, 0);
 		gl.glScalef(10, 40, 1);
 
-		 drawFace(gl);
+		drawFace(gl);
 		gl.glPopMatrix();
 	}
-	
+
 	public static void drawInterior(GL2 gl) {
 		float[] rgba = { 0.16f, 0.16f, 0.14f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,
-				new float[] { 0.6f, 0.6f, 0.4f }, 0);
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] { 0.3f, 0.3f, 0.1f }, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, new float[] {
+				0.6f, 0.6f, 0.4f }, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] {
+				0.3f, 0.3f, 0.1f }, 0);
 		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 5.5f);
-		
+
 		// down
 		gl.glPushMatrix();
 		gl.glTranslatef(0, 2.5f, 0.0f);

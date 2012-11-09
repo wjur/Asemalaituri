@@ -48,7 +48,7 @@ public class Camera {
 
 		double halfPi = Math.PI / 2.0;
 
-		if (phi + step >= halfPi) {
+		/*if (phi + step >= halfPi) {
 			step = (float) (halfPi - phi);
 			phi = halfPi;
 		} else if (phi + step <= -halfPi) {
@@ -56,7 +56,7 @@ public class Camera {
 			phi = -halfPi;
 		} else {
 			phi += step;
-		}
+		}*/
 
 		up = Matrix.Rotate(step, right, up);
 		forward = Matrix.Rotate(step, right, forward);
