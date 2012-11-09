@@ -228,7 +228,7 @@ public class Scene extends GLJPanel implements GLEventListener {
         int fragShader = gl.glCreateShader(GL2.GL_FRAGMENT_SHADER);
 
         //Compile the vertexShader String into a program.
-        String[] vlines = new String[] { loadFile("src/vertexshader.glsl") };
+        String[] vlines = new String[] { loadFile("vertexshader.glsl") };
         int[] vlengths = new int[] { vlines[0].length() };
         gl.glShaderSource(vertShader, vlines.length, vlines, vlengths, 0);
         gl.glCompileShader(vertShader);
@@ -249,7 +249,7 @@ public class Scene extends GLJPanel implements GLEventListener {
         }
 
         //Compile the fragmentShader String into a program.
-        String[] flines = new String[] { loadFile("src/fragmentshader.glsl") };
+        String[] flines = new String[] { loadFile("fragmentshader.glsl") };
         int[] flengths = new int[] { flines[0].length() };
         gl.glShaderSource(fragShader, flines.length, flines, flengths, 0);
         gl.glCompileShader(fragShader);
