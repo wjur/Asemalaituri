@@ -1,3 +1,5 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Random;
 
 import javax.media.opengl.GL2;
@@ -77,19 +79,19 @@ public class Scene extends GLJPanel implements GLEventListener {
 			* sent to the GPU driver for compilation.
 			*/
 			static final String fragmentShader =
-			"#ifdef GL_ES \n" +
-			"precision mediump float; \n" +
-			"precision mediump int; \n" +
-			"#endif \n" +
-
-			"varying vec4 varying_Color; \n" + //incomming varying data to the
-			                                        //frament shader
-			                                        //sent from the vertex shader
-			"void main (void) \n" +
-			"{ \n" +
-			" gl_FragColor = varying_Color; \n" +
-			" gl_FragColor = vec4(0.5, 0.0, 1.0, 1.0);\n" +
-			"} ";
+				"#ifdef GL_ES \n" +
+				"precision mediump float; \n" +
+				"precision mediump int; \n" +
+				"#endif \n" +
+				
+				"varying vec4 varying_Color; \n" + //incomming varying data to the
+				                                        //frament shader
+				                                        //sent from the vertex shader
+				"void main (void) \n" +
+				"{ \n" +
+				" gl_FragColor = varying_Color; \n" +
+				" gl_FragColor = vec4(0.5, 0.0, 1.0, 1.0);\n" +
+				"} ";
 	
 
 	public Scene() {
@@ -264,6 +266,27 @@ public class Scene extends GLJPanel implements GLEventListener {
 		setShaders(gl);
 		
 	}
+	
+	private String loadFile(String filename)
+	{
+		StringBuilder vertexCode = new StringBuilder();
+		String line = null ;
+		try
+		{
+		    BufferedReader reader = new BufferedReader(new FileReader(filename));
+		    while( (line = reader.readLine()) !=null )
+		    {
+		    	vertexCode.append(line);
+		    	vertexCode.append('\n');
+		    }
+		}
+		catch(Exception e)
+		{
+			throw new IllegalArgumentException("unable to load shader from file ["+filename+"]", e);
+		}
+ 
+		return vertexCode.toString();
+	}
 
 	private void setShaders(GL2 gl) {
 		//Create shaders
@@ -272,7 +295,7 @@ public class Scene extends GLJPanel implements GLEventListener {
         int fragShader = gl.glCreateShader(GL2.GL_FRAGMENT_SHADER);
 
         //Compile the vertexShader String into a program.
-        String[] vlines = new String[] { vertexShader };
+        String[] vlines = new String[] { loadFile("src/vertexshader.glsl") };
         int[] vlengths = new int[] { vlines[0].length() };
         gl.glShaderSource(vertShader, vlines.length, vlines, vlengths, 0);
         gl.glCompileShader(vertShader);
@@ -293,7 +316,7 @@ public class Scene extends GLJPanel implements GLEventListener {
         }
 
         //Compile the fragmentShader String into a program.
-        String[] flines = new String[] { fragmentShader };
+        String[] flines = new String[] { loadFile("src/fragmentshader.glsl") };
         int[] flengths = new int[] { flines[0].length() };
         gl.glShaderSource(fragShader, flines.length, flines, flengths, 0);
         gl.glCompileShader(fragShader);
