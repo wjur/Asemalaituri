@@ -6,13 +6,13 @@ public class Station {
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		gl.glTexCoord2f(0,40);
+		gl.glTexCoord2f(0,80);
 		gl.glVertex3f(-1, 1, 0);
 		
 
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		gl.glTexCoord2f(1,40);
+		gl.glTexCoord2f(1,80);
 		gl.glVertex3f(1, 1, 0);
 		
 
