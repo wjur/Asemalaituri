@@ -85,7 +85,8 @@ public class Column {
 	static FloatBuffer colors_buffer = Buffers.newDirectFloatBuffer(colors1);
 	static FloatBuffer tex_buffer = Buffers.newDirectFloatBuffer(tex1);
 	
-	public static void draw(GL2 gl, float x, float y, float z, int tid) {
+	public static void draw(GL2 gl, float x, float y, float z, int tid, int texturesOn) {
+		gl.glUniform1i(texturesOn,1);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, tid);
 		float[] rgba = { 0.1f, 0.1f, 0.1f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);

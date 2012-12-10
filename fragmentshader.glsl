@@ -1,5 +1,10 @@
 varying vec3 normal, eyeVec, ld[4];
 varying float att[4];
+uniform sampler2D color_texture0;
+uniform sampler2D color_texture1;
+
+uniform int texturesOn;
+uniform int fogOn;
 
 const float cos_delta_angle = -0.05;
 
@@ -46,6 +51,18 @@ void main (void)
 						   specular * att[i]* spot;	
 		}
 	}
-
-	gl_FragColor = final_color;			
+	gl_FragColor = final_color;
+	//gl_FragColor = texture2D(color_texture0, gl_TexCoord[0].st);
+	if (texturesOn == 1)
+	{
+		gl_FragColor *= texture2D(color_texture0, gl_TexCoord[0].st);
+	}
+	else if (texturesOn == 2)
+	{
+		vec4 tex1 = texture2D(color_texture0,gl_TexCoord[0].st);
+		vec4 tex2 = texture2D(color_texture1,gl_TexCoord[1].st);
+		vec4 color= mix(tex1,tex2,tex2.a);
+		gl_FragColor*=color;
+	}
+				
 }

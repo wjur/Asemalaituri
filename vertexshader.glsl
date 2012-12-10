@@ -3,7 +3,12 @@ varying float att[4];
 
 void main()
 {	
+	gl_Position = ftransform();		
 	normal = gl_NormalMatrix * gl_Normal;
+	gl_TexCoord[0] = gl_MultiTexCoord0;
+	gl_TexCoord[1] = gl_MultiTexCoord1;
+	//gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+	//gl_TexCoord[1] = gl_TextureMatrix[1] * gl_MultiTexCoord1;
 
 	vec3 vVertex = vec3(gl_ModelViewMatrix * gl_Vertex);
 	
@@ -18,5 +23,5 @@ void main()
 	
 	eyeVec = -vVertex;
 
-	gl_Position = ftransform();		
+	
 }

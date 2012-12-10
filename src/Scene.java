@@ -28,10 +28,13 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	long startTime, lastTime;
 	long lapsed, delta;
-	private boolean useShaders = false;
+	private boolean useShaders = true;
 	private int tid_m;
 	private int tid_m2;
 	private int tid_peron;
+	public int texturesOn;
+	private int sampler0;
+	private int sampler1;
 
 	public Scene() {
 		setFocusable(true);
@@ -65,10 +68,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 		camera.Update(delta);
 		setGlobalLight(gl);
 
-		Station.drawExterior(gl);
-		Station.drawInterior(gl, tid_peron, tid_m);
+		Station.drawExterior(gl, texturesOn);
+		Station.drawInterior(gl, tid_peron, tid_m, texturesOn, sampler0, sampler1);
 		for (int i = -2; i <= 2; i++)
-			Column.draw(gl, 0, 0, 7 * (float) i, tid_grass);
+			Column.draw(gl, 0, 0, 7 * (float) i, tid_grass, texturesOn);
 
 		for (int i = -2; i <= 3; i++)
 			drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
@@ -122,6 +125,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
 		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_SPOT_CUTOFF, 60 * f1);
 		gl.glEnable(GL2.GL_LIGHT2);
+		gl.glUniform1i(texturesOn,0);
 		drawSpot(gl, x, y, z, angle);
 
 		gl.glPopMatrix();
@@ -152,6 +156,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
 		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_SPOT_CUTOFF, 60 - 20 * f2);
 		gl.glEnable(GL2.GL_LIGHT3);
+		gl.glUniform1i(texturesOn,0);
 		drawSpot(gl, x, y, z, angle);
 
 		gl.glPopMatrix();
@@ -169,6 +174,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glScalef(3, 3, 3);
 		gl.glRotatef(90, 0, 1, 0);
 		gl.glTranslatef(0 + x, 3 + y, 0 + z);
+		gl.glUniform1i(texturesOn,0);
 		lampModel.opengldraw(gl);
 		gl.glPopMatrix();
 	}
@@ -310,6 +316,15 @@ public class Scene extends GLJPanel implements GLEventListener {
 
         gl.glLinkProgram(shaderProgram);
         gl.glUseProgram(shaderProgram);
+        
+        
+        texturesOn = gl.glGetUniformLocation(shaderProgram, "texturesOn");
+        sampler0 = gl.glGetUniformLocation(shaderProgram, "color_texture0");
+        sampler1 = gl.glGetUniformLocation(shaderProgram, "color_texture1");
+        //gl.glUniform1i(texturesOn,0);
+        
+        
+        
 	}
 
 	private Boolean loadModels(GL2 gl) {
