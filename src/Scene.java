@@ -26,6 +26,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	long startTime, lastTime;
 	long lapsed, delta;
+	private boolean useShaders = true;
 
 	public Scene() {
 		setFocusable(true);
@@ -181,7 +182,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLoadIdentity();
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		//gl.glEnable(GL2.GL_LIGHTING);
+		
 		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
@@ -193,10 +194,14 @@ public class Scene extends GLJPanel implements GLEventListener {
 		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		
-		
-		
-		
-		setShaders(gl);
+		if (!useShaders)
+		{
+			gl.glEnable(GL2.GL_LIGHTING);
+		}
+		else
+		{
+			setShaders(gl);
+		}
 		
 	}
 	
