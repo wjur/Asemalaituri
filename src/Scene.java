@@ -1,5 +1,10 @@
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Random;
 
 import javax.media.opengl.GL2;
@@ -10,6 +15,9 @@ import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 import com.jogamp.opengl.util.FPSAnimator;
+
+import de.matthiasmann.twl.utils.PNGDecoder;
+import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 @SuppressWarnings("serial")
 public class Scene extends GLJPanel implements GLEventListener {
@@ -175,6 +183,30 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
+		
+		InputStream in;
+		try {
+			in = new FileInputStream("./gfx/liscie.png");
+			
+				PNGDecoder decoder = new PNGDecoder(in);
+				 
+				System.out.println("width="+decoder.getWidth());
+				System.out.println("height="+decoder.getHeight());
+				 
+				ByteBuffer buf = ByteBuffer.allocateDirect(4*decoder.getWidth()*decoder.getHeight());
+				decoder.decode(buf, decoder.getWidth()*4, Format.RGBA);
+				buf.flip();
+				in.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.print("Nie można załadować pliku tekstury");
+		}
+		
+		
+		
+		
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glShadeModel(GL2.GL_SMOOTH);
