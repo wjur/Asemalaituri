@@ -2,7 +2,7 @@ import javax.media.opengl.GL2;
 
 
 public class Fog {
-	private float FogCol[]={0.8f,0.8f,0.8f}; // Define a nice light grey
+	private float FogCol[]={0.4f,0.1f,0.1f}; // Define a nice light grey
 	private float near = 0.3f;
 	private float far = 50f;
 	private float density = 0.03f;

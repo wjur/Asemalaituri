@@ -212,11 +212,15 @@ public class Scene extends GLJPanel implements GLEventListener {
 		{
 			setShaders(gl);
 		}
+		
+		gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glEnable(GL2.GL_BLEND);
+		
 		gl.glEnable(GL2.GL_TEXTURE_2D);
 		tid_grass = TextureLoader.setupTextures("./gfx/liscie.png", gl);
 		tid_m = TextureLoader.setupTextures("./gfx/m.png", gl);
 		tid_m2 = TextureLoader.setupTextures("./gfx/m2.png", gl);
-		tid_peron = TextureLoader.setupTextures("./gfx/peron.png", gl);
+		tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
 		System.out.print(tid_grass);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 		//gl.glB
