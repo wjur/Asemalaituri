@@ -212,12 +212,13 @@ public class Scene extends GLJPanel implements GLEventListener {
 		    	vertexCode.append(line);
 		    	vertexCode.append('\n');
 		    }
+		    reader.close();
 		}
 		catch(Exception e)
 		{
 			throw new IllegalArgumentException("unable to load shader from file ["+filename+"]", e);
 		}
- 
+		
 		return vertexCode.toString();
 	}
 
