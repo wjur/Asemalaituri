@@ -62,11 +62,31 @@ public class Column {
 			0, 0, 1, 0, 0, 0, 0, 1, 0, // v4-v7-v6 (back)
 			0, 1, 0, 0, 1, 1, 0, 0, 1 }; // v6-v5-v4
 	
+	private static float tex1[] = {
+		0,0, 1,0, 1,1, 0,1,
+		0,0, 1,0, 1,1, 0,1,
+		0,0, 1,0, 1,1, 0,1,
+		
+		0,0, 1,0, 1,1, 0,1,
+		0,0, 1,0, 1,1, 0,1,
+		0,0, 1,0, 1,1, 0,1,
+		
+		0,0, 1,0, 1,1, 0,1,
+		0,0, 1,0, 1,1, 0,1,
+		0,0, 1,0, 1,1, 0,1,
+		
+		0,0, 1,0, 1,1, 0,1,
+		0,0, 1,0, 1,1, 0,1,
+		0,0, 1,0, 1,1, 0,1,
+		};
+	
 	static FloatBuffer normals_buffer = Buffers.newDirectFloatBuffer(normals1);
 	static FloatBuffer vertices_buffer = Buffers.newDirectFloatBuffer(vertices1);
 	static FloatBuffer colors_buffer = Buffers.newDirectFloatBuffer(colors1);
+	static FloatBuffer tex_buffer = Buffers.newDirectFloatBuffer(tex1);
 	
-	public static void draw(GL2 gl, float x, float y, float z) {
+	public static void draw(GL2 gl, float x, float y, float z, int tid) {
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, tid);
 		float[] rgba = { 0.1f, 0.1f, 0.1f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,
@@ -75,12 +95,13 @@ public class Column {
 		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 0.5f);
 			
 		gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-		//gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
+		gl.glEnableClientState (GL2.GL_TEXTURE_COORD_ARRAY); 
 		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
 
 		gl.glNormalPointer(GL2.GL_FLOAT, 0, normals_buffer);
 		//gl.glColorPointer(3, GL2.GL_FLOAT, 0, colors_buffer);
 		gl.glVertexPointer(3, GL2.GL_FLOAT, 0, vertices_buffer);
+		gl.glTexCoordPointer(2, GL2.GL_FLOAT, 0, tex_buffer);
 
 		gl.glPushMatrix();
 
@@ -91,6 +112,7 @@ public class Column {
 		gl.glPopMatrix();
 
 		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+		gl.glDisableClientState (GL2.GL_TEXTURE_COORD_ARRAY); 
 		//gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
 	}

@@ -1,12 +1,6 @@
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.Random;
-
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -15,9 +9,6 @@ import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 import com.jogamp.opengl.util.FPSAnimator;
-
-import de.matthiasmann.twl.utils.PNGDecoder;
-import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 @SuppressWarnings("serial")
 public class Scene extends GLJPanel implements GLEventListener {
@@ -32,10 +23,15 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private GLModel lampModel = null;
 
 	private Random random;
+	
+	public int tid_grass;
 
 	long startTime, lastTime;
 	long lapsed, delta;
 	private boolean useShaders = false;
+	private int tid_m;
+	private int tid_m2;
+	private int tid_peron;
 
 	public Scene() {
 		setFocusable(true);
@@ -70,9 +66,9 @@ public class Scene extends GLJPanel implements GLEventListener {
 		setGlobalLight(gl);
 
 		Station.drawExterior(gl);
-		Station.drawInterior(gl);
+		Station.drawInterior(gl, tid_peron, tid_m);
 		for (int i = -2; i <= 2; i++)
-			Column.draw(gl, 0, 0, 7 * (float) i);
+			Column.draw(gl, 0, 0, 7 * (float) i, tid_grass);
 
 		for (int i = -2; i <= 3; i++)
 			drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
@@ -162,12 +158,13 @@ public class Scene extends GLJPanel implements GLEventListener {
 	}
 
 	private void drawSpot(GL2 gl, float x, float y, float z, float angle) {
-
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 		spotModel.opengldraw(gl);// .draw(gl);
 
 	}
 
 	private void drawLamp(GL2 gl, float x, float y, float z) {
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 		gl.glPushMatrix();
 		gl.glScalef(3, 3, 3);
 		gl.glRotatef(90, 0, 1, 0);
@@ -183,29 +180,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		
-		InputStream in;
-		try {
-			in = new FileInputStream("./gfx/liscie.png");
-			
-				PNGDecoder decoder = new PNGDecoder(in);
-				 
-				System.out.println("width="+decoder.getWidth());
-				System.out.println("height="+decoder.getHeight());
-				 
-				ByteBuffer buf = ByteBuffer.allocateDirect(4*decoder.getWidth()*decoder.getHeight());
-				decoder.decode(buf, decoder.getWidth()*4, Format.RGBA);
-				buf.flip();
-				in.close();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.print("Nie można załadować pliku tekstury");
-		}
-		
-		
-		
 		
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glEnable(GL2.GL_DEPTH_TEST);
@@ -230,8 +204,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		
-		
-		
 		if (!useShaders)
 		{
 			gl.glEnable(GL2.GL_LIGHTING);
@@ -240,7 +212,14 @@ public class Scene extends GLJPanel implements GLEventListener {
 		{
 			setShaders(gl);
 		}
-		
+		gl.glEnable(GL2.GL_TEXTURE_2D);
+		tid_grass = TextureLoader.setupTextures("./gfx/liscie.png", gl);
+		tid_m = TextureLoader.setupTextures("./gfx/m.png", gl);
+		tid_m2 = TextureLoader.setupTextures("./gfx/m2.png", gl);
+		tid_peron = TextureLoader.setupTextures("./gfx/peron.png", gl);
+		System.out.print(tid_grass);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+		//gl.glB
 	}
 
 	

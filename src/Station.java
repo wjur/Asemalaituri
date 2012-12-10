@@ -6,23 +6,32 @@ public class Station {
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
+		gl.glTexCoord2f(0,40);
 		gl.glVertex3f(-1, 1, 0);
+		
 
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
+		gl.glTexCoord2f(1,40);
 		gl.glVertex3f(1, 1, 0);
+		
 
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
+		gl.glTexCoord2f(1,0);
 		gl.glVertex3f(1, 0, 0);
 
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
+		gl.glTexCoord2f(0,0);
 		gl.glVertex3f(-1, 0, 0);
 		gl.glEnd();
 	}
 
 	public static void drawExterior(GL2 gl) {
+		
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+		
 		float[] rgba = { 0.02f, 0.02f, 0.02f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, new float[] {
@@ -86,7 +95,7 @@ public class Station {
 		gl.glPopMatrix();
 	}
 
-	public static void drawInterior(GL2 gl) {
+	public static void drawInterior(GL2 gl, int tid1, int tid2) {
 		float[] rgba = { 0.16f, 0.16f, 0.14f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, new float[] {
@@ -96,6 +105,7 @@ public class Station {
 		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 5.5f);
 
 		// down
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, tid1);
 		gl.glPushMatrix();
 		gl.glTranslatef(0, 2.5f, 0.0f);
 		// gl.glTranslatef(0, 0, -20);
