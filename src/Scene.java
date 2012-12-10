@@ -18,6 +18,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private static int height;
 	private FPSAnimator animator;
 	public Camera camera;
+	public Fog fog;
 
 	private GLModel spotModel = null;
 	private GLModel lampModel = null;
@@ -26,7 +27,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	long startTime, lastTime;
 	long lapsed, delta;
-	private boolean useShaders = true;
+	private boolean useShaders = false;
 
 	public Scene() {
 		setFocusable(true);
@@ -37,12 +38,14 @@ public class Scene extends GLJPanel implements GLEventListener {
 		width = height = 800;
 		random = new Random();
 		lastTime = startTime = System.nanoTime();
+		fog = new Fog();
 	}
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glLoadIdentity();
+		fog.TrunOn(gl);
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
 		long now = System.nanoTime();
@@ -186,6 +189,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
+		
 
 		if (false == loadModels(gl)) {
 			System.exit(1);
@@ -193,6 +197,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		
+		
 		
 		if (!useShaders)
 		{
@@ -204,6 +210,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 		}
 		
 	}
+
+	
 	
 	private String loadFile(String filename)
 	{
@@ -320,7 +328,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightColorDiffuse, 0);
 		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_LINEAR_ATTENUATION, 0.05f);
 		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
-		//gl.glEnable(GL2.GL_LIGHT1);
+		gl.glEnable(GL2.GL_LIGHT1);
 
 		float[] lightPos2 = { 0, 5, -11f, 1 };
 		float[] lightColorAmbient2 = { 0.01f, 0.01f, 0.01f, 1f };

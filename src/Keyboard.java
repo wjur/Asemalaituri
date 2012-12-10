@@ -51,6 +51,24 @@ public class Keyboard implements KeyListener {
 		case KeyEvent.VK_D:
 			scene.camera.MoveLeft(0);
 			break;
+			
+		case KeyEvent.VK_1:
+			scene.fog.setOn(!scene.fog.isOn());
+			break;
+		
+		case KeyEvent.VK_2:
+			scene.fog.ModifyDensity(1);
+			break;
+		case KeyEvent.VK_3:
+			scene.fog.ModifyDensity(-1);
+			break;
+			
+		case KeyEvent.VK_4:
+			scene.fog.ChangeType();
+			break;
+		case KeyEvent.VK_5:
+			//scene.fog.ModifyDensity(-0.1f);
+			break;	
 
 		default:
 			break;
@@ -59,7 +77,11 @@ public class Keyboard implements KeyListener {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-
+		switch(e.getKeyCode())
+		{
+		
+			
+		}
 	}
 
 }
