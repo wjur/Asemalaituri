@@ -55,7 +55,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glLoadIdentity();
 		fog.Apply();
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT );
 
 		long now = System.nanoTime();
 		delta = now - lastTime;
@@ -68,8 +68,55 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		//System.out.println("*");
 		camera.Update(delta);
-		setGlobalLight(gl);
+		
+		gl.glColorMask(true,true,true,true);
+		gl.glPushMatrix();
+		gl.glScalef(1, 1, -1);
+		gl.glTranslatef(0, 0, 8);
+		drawAll(gl, GL2.GL_CW);
+		
+		gl.glPopMatrix();
+		
+		
+		
+		gl.glClear(GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
+		
+		gl.glStencilOp(GL2.GL_REPLACE, GL2.GL_REPLACE, GL2.GL_REPLACE);
+		gl.glStencilFunc(GL2.GL_ALWAYS, 1, 1);
+		gl.glEnable(GL2.GL_STENCIL_TEST);
+		
+		
+		
+		gl.glColorMask(false,false,false,false);
+		
+		
+		gl.glBegin(GL2.GL_QUADS);
+		gl.glVertex3f(-2.5f, 5f, -4);
+		gl.glVertex3f(2.5f, 5f, -4);
+		gl.glVertex3f(2.5f, -5f, -4);
+		gl.glVertex3f(-2.5f, -5f, -4);
+		gl.glEnd();
+		
+		gl.glStencilOp(GL2.GL_KEEP, GL2.GL_KEEP, GL2.GL_KEEP);
+		gl.glStencilMask(GL2.GL_NOTEQUAL);
+		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+		gl.glDisable(GL2.GL_STENCIL_TEST);
+		
+		//gl.glColorMask(false,false,false,false);
+		gl.glColorMask(true,true,true,true);
+		drawAll(gl, GL2.GL_CCW);
 
+		gl.glFlush();
+		try {
+			Thread.sleep(3);
+		} catch (InterruptedException e) {
+			// e.printStackTrace();
+		}
+	}
+
+	private void drawAll(GL2 gl, int cull) {
+		gl.glFrontFace(cull);
+		setGlobalLight(gl);
 		Station.drawExterior(gl, texturesOn);
 		Station.drawInterior(gl, tid_peron, selected_tid_m == 0 ? tid_m : tid_m2, texturesOn, sampler0, sampler1);
 		for (int i = -2; i <= 2; i++)
@@ -80,13 +127,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		drawSpotA(gl, 4.5f, 0, 0, -90);
 		drawSpotB(gl, 3, 0, 0, -135);
-
-		gl.glFlush();
-		try {
-			Thread.sleep(3);
-		} catch (InterruptedException e) {
-			// e.printStackTrace();
-		}
 	}
 
 	private void drawSpotA(GL2 gl, float x, float y, float z, float angle) {
