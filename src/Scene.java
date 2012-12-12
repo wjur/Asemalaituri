@@ -35,6 +35,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 	public int texturesOn;
 	private int sampler0;
 	private int sampler1;
+	public int selected_tid_m;
+	private int fogOn;
 
 	public Scene() {
 		setFocusable(true);
@@ -45,14 +47,14 @@ public class Scene extends GLJPanel implements GLEventListener {
 		width = height = 800;
 		random = new Random();
 		lastTime = startTime = System.nanoTime();
-		fog = new Fog();
+		
 	}
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glLoadIdentity();
-		fog.TrunOn(gl);
+		fog.Apply();
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
 		long now = System.nanoTime();
@@ -69,7 +71,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		setGlobalLight(gl);
 
 		Station.drawExterior(gl, texturesOn);
-		Station.drawInterior(gl, tid_peron, tid_m, texturesOn, sampler0, sampler1);
+		Station.drawInterior(gl, tid_peron, selected_tid_m == 0 ? tid_m : tid_m2, texturesOn, sampler0, sampler1);
 		for (int i = -2; i <= 2; i++)
 			Column.draw(gl, 0, 0, 7 * (float) i, tid_grass, texturesOn);
 
@@ -223,6 +225,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		
 		gl.glEnable(GL2.GL_TEXTURE_2D);
 		tid_grass = TextureLoader.setupTextures("./gfx/liscie.png", gl);
+		selected_tid_m = 0;
 		tid_m = TextureLoader.setupTextures("./gfx/m.png", gl);
 		tid_m2 = TextureLoader.setupTextures("./gfx/m2.png", gl);
 		tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
@@ -321,9 +324,10 @@ public class Scene extends GLJPanel implements GLEventListener {
         texturesOn = gl.glGetUniformLocation(shaderProgram, "texturesOn");
         sampler0 = gl.glGetUniformLocation(shaderProgram, "color_texture0");
         sampler1 = gl.glGetUniformLocation(shaderProgram, "color_texture1");
+        fogOn = gl.glGetUniformLocation(shaderProgram, "fogOn");
         //gl.glUniform1i(texturesOn,0);
         
-        
+        fog = new Fog(fogOn, gl);
         
 	}
 

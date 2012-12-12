@@ -53,7 +53,7 @@ public class Keyboard implements KeyListener {
 			break;
 			
 		case KeyEvent.VK_1:
-			scene.fog.setOn(!scene.fog.isOn());
+			scene.fog.Switch();
 			break;
 		
 		case KeyEvent.VK_2:
@@ -69,6 +69,10 @@ public class Keyboard implements KeyListener {
 		case KeyEvent.VK_5:
 			//scene.fog.ModifyDensity(-0.1f);
 			break;	
+			
+		case KeyEvent.VK_T:
+			scene.selected_tid_m = (scene.selected_tid_m + 1) % 2;
+			break;
 
 		default:
 			break;
