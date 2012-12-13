@@ -50,11 +50,22 @@ public abstract class Drawable {
 	public void setTexture1(int texture1) {
 		this.texture1 = texture1;
 	}
+	
+	public void PreDraw(GL2 gl)
+	{
+		
+	}
+	
+	public void PostDraw(GL2 gl)
+	{
+		
+	}
 
 
 	public void Draw(GL2 gl, int cull, int onlyLight)
 	{
 		gl.glPushMatrix();
+		PreDraw(gl);
 		if (onlyLight == 1)
 		{
 			SetLight(gl);
@@ -63,6 +74,7 @@ public abstract class Drawable {
 		{
 			DrawModels(gl, cull);
 		}
+		PostDraw(gl);
 		gl.glPopMatrix();
 	}
 

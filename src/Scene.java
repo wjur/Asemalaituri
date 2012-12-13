@@ -16,6 +16,8 @@ import drawables.*;
 import drawables.modeled.GLModel;
 import drawables.modeled.Lamp;
 import drawables.modeled.Spotlight;
+import drawables.modeled.SpotlightA;
+import drawables.modeled.SpotlightB;
 
 @SuppressWarnings("serial")
 public class Scene extends GLJPanel implements GLEventListener {
@@ -144,6 +146,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 		setGlobalLight(gl);
 		//s.DrawModels(gl, cull);
 		s.setTexture0(selected_tid_m == 0 ? tid_m : tid_m2);
+		
+		for (int i = 0; i < sceneObjects.size(); i++) {
+			((Drawable)sceneObjects.get(i)).Draw(gl, cull, 1);
+		}
 		
 		for (int i = 0; i < sceneObjects.size(); i++) {
 			((Drawable)sceneObjects.get(i)).Draw(gl, cull, 0);
@@ -324,7 +330,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		}
 		
 		GLModel spotlightmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/spot.obj", "./models/spot.mtl", gl);
-		sl = new Spotlight(texturesOn, GL2.GL_LIGHT2);
+		sl = new SpotlightA(texturesOn, GL2.GL_LIGHT2);
 		sl.SetModel(spotlightmodel);
 		//4.5f, 0, 0, -90);
 		sl.SetPos(4.5f, 0, 0);
@@ -333,7 +339,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		sceneObjects.add(sl);
 		
 		//gl, 3, 0, 0, -135
-		s2 = new Spotlight(texturesOn, GL2.GL_LIGHT3);
+		s2 = new SpotlightB(texturesOn, GL2.GL_LIGHT3);
 		s2.SetModel(spotlightmodel);
 		//4.5f, 0, 0, -90);
 		s2.SetPos(3f, 0, 0);
