@@ -22,9 +22,9 @@ public class Camera {
 	}
 
 	public void Update(long miliseconds) {
-		System.out.println(position.Get(0,1));
-		System.out.println(position.Get(0,2));
-		System.out.println(position.Get(0,3));
+		System.out.println(forward.Get(0,1));
+		System.out.println(forward.Get(0,2));
+		System.out.println(forward.Get(0,3));
 		System.out.println(".");
 		float back = (float)miliseconds * 0.00001f;
 		if (moveForward != 0)

@@ -53,6 +53,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private int fbo;
 	private int rbo;
 	private int screenTexture;
+	private GLU glu;
 	
 	Vector<Drawable> sceneObjects;
 
@@ -67,6 +68,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		lastTime = startTime = System.nanoTime();
 		sceneObjects = new Vector<Drawable>();
 		intBuffer = IntBuffer.allocate(1);
+		glu = new GLU();
 		
 	}
 
@@ -85,7 +87,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		lapsed = now - startTime;
 		lapsed /= 1000; // Can I haz milisecondz? 
 		delta /= 1000;
-		camera.Update(delta);
+		
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, fbo);
 		gl.glBindRenderbuffer(GL2.GL_RENDERBUFFER, rbo);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, screenTexture);
@@ -100,12 +102,21 @@ public class Scene extends GLJPanel implements GLEventListener {
 		
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT );
 		
+		gl.glPushMatrix();
+		Matrix position = new Matrix(new double[][] { { 2.87f, 4.23f, -8.626, 1 } });
+		Matrix forward = new Matrix(new double[][] { { 0.2, -0.2, -1, 1 } });
+		Matrix up = new Matrix(new double[][] { { 0, 1, 0, 1 } });
+		Matrix position_forward = position.minus(forward);
+		glu.gluLookAt(position.Get(0, 0), position.Get(0, 1),
+				position.Get(0, 2), position_forward.Get(0, 0),
+				position_forward.Get(0, 1), position_forward.Get(0, 2),
+				up.Get(0, 0), up.Get(0, 1), up.Get(0, 2));
 		//System.out.println("*");
 		renderWithMirror(gl, true, nextint);
-		
+		gl.glPopMatrix();
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
 		
-		
+		camera.Update(delta);
 		renderWithMirror(gl, false, nextint);
 		
 		
