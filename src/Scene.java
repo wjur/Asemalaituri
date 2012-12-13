@@ -101,12 +101,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT );
 		
 		//System.out.println("*");
-		renderWithMirror(gl, false, nextint);
+		renderWithMirror(gl, true, nextint);
 		
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
 		
 		
-		renderWithMirror(gl, true, nextint);
+		renderWithMirror(gl, false, nextint);
 		
 		
 
@@ -118,7 +118,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		}
 	}
 
-	private void renderWithMirror(GL2 gl, boolean drawScreen, int nextint) {
+	private void renderWithMirror(GL2 gl, boolean fakeCamera, int nextint) {
 		
 		
 		gl.glPushMatrix();
@@ -170,10 +170,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glColorMask(true,true,true,true);
 		drawAll(gl, GL2.GL_CCW, nextint);
 		
-		if(drawScreen)
+		if(!fakeCamera)
 		{
 			gl.glFrontFace(GL2.GL_CCW);
-			gl.glUniform1i(texturesOn,1);
+			gl.glUniform1i(texturesOn,3);
 			gl.glBindTexture(GL2.GL_TEXTURE_2D, screenTexture);
 
 			

@@ -65,6 +65,10 @@ void main (void)
 		vec4 color= mix(t1,t2,t2.a);
 		gl_FragColor*=color;
 	}
+	else if (texturesOn == 3)
+	{
+		gl_FragColor = texture2D(color_texture0, gl_TexCoord[0].st);
+	}
 	
 	//exp2
 	if (fogOn == 3)
