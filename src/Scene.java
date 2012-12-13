@@ -68,7 +68,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private int envrbo;
 	private int shaderProgram;
 	private float[] potpos = new float[]{2,3,0};
-	//private float[] potpos = new float[]{0,0,0};
 
 	public Scene() {
 		setFocusable(true);
@@ -84,6 +83,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 		glu = new GLU();
 		
 	}
+	
+	
+	public int fakeH = 64;
+	public int fakeW = fakeH*2;
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
@@ -102,12 +105,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 		lapsed /= 1000; // Can I haz milisecondz? 
 		delta /= 1000;
 		
-		renderToEnvMap(gl);
+		generateEnvMap(gl);
 		
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, fbo);
 		gl.glBindRenderbuffer(GL2.GL_RENDERBUFFER, rbo);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, screenTexture);
-		gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0,GL2.GL_RGB, 768, 768, 0,GL2.GL_RGB, GL2.GL_UNSIGNED_BYTE, null);
+		gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0,GL2.GL_RGB, fakeW, fakeH, 0,GL2.GL_RGB, GL2.GL_UNSIGNED_BYTE, null);
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
 		gl.glFramebufferTextureARB(GL2.GL_FRAMEBUFFER, GL2.GL_COLOR_ATTACHMENT0, screenTexture, 0);
@@ -117,7 +120,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glFramebufferRenderbuffer( GL2.GL_FRAMEBUFFER,  GL2.GL_STENCIL_ATTACHMENT,  GL2.GL_RENDERBUFFER, rbo);
 		
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT );
-		
+		gl.glViewport(0,  0, fakeW, fakeH);
 		gl.glPushMatrix();
 		Matrix position = new Matrix(new double[][] { { 2.87f, 4.23f, -8.626, 1 } });
 		Matrix forward = new Matrix(new double[][] { { 0.2, -0.2, -1, 1 } });
@@ -131,6 +134,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 		renderWithMirror(gl, true, nextint);
 		gl.glPopMatrix();
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
+		
+		gl.glViewport(0,  0, width, width);
 		
 		camera.Update(delta);
 		renderWithMirror(gl, false, nextint);
@@ -216,7 +221,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//gl.glColorMask(false,false,false,false);
 		gl.glColorMask(true,true,true,true);
 		drawAll(gl, GL2.GL_CCW, nextint);
-		drawTeapotEnvMap(gl);
+		drawMapped(gl);
 		
 		if(!fakeCamera)
 		{
@@ -339,12 +344,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 	}
 	private static int envTexSize = 256;
 	
-	//TODO przeformatowac
-	protected void drawTeapotEnvMap(GL2 gl) {
+	protected void drawMapped(GL2 gl) {
 		gl.glUseProgram(0);
-		gl.glActiveTexture(GL2.GL_TEXTURE1);
-		gl.glDisable(GL2.GL_TEXTURE_2D);
-		gl.glActiveTexture(GL2.GL_TEXTURE0);
 		
 		cubemaptexture.bind(gl);
 		gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
@@ -352,27 +353,22 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
 		gl.glPushMatrix();
 		gl.glColor3d(1, 1, 1);
-		//gl.glTranslatef(2, 4, 0);
 		
-		//TODO odkomentowac
 		gl.glTranslated(potpos[0], potpos[1], potpos[2]);
 		
-		// gl.glEnable(GL2.GL_TEXTURE_2D);
 		gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
 		gl.glEnable(GL2.GL_TEXTURE_GEN_S);
 		gl.glEnable(GL2.GL_TEXTURE_GEN_T);
 		gl.glEnable(GL2.GL_TEXTURE_GEN_R);
 
 		GLUT glut = new GLUT();
-		// gl.glEnable(GL2.GL_NORMALIZE);
-	
-		//glut.glutSolidSphere(0.3, 20, 20);
-		
 		
 		gl.glFrontFace(GL2.GL_CCW);
+		
 		//glut.glutSolidTeapot(0.3);
 		glut.glutSolidSphere(0.3, 20, 20);
 		//glut.glutSolidCube(1f);
+		
 		gl.glPopMatrix();
 
 		gl.glDisable(GL2.GL_TEXTURE_GEN_S);
@@ -384,7 +380,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glUseProgram(shaderProgram);
 	}
 	
-	private void renderToEnvMap(GL2 gl) {
+	private void generateEnvMap(GL2 gl) {
 		gl.glActiveTexture(GL2.GL_TEXTURE0);
 		gl.glPushAttrib(GL2.GL_VIEWPORT_BIT);
 		gl.glViewport(0, 0, envTexSize, envTexSize);
@@ -397,16 +393,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
-		
-		
-		//TODO odkomentować
-		
-		
-		
-		//gl.glTranslated(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
-		 //positionCamera(gl);
-
-		 
 		 
 		gl.glBindTexture(GL2.GL_TEXTURE_CUBE_MAP, cubemaptexture.getTextureObject(gl));
 		
@@ -416,43 +402,16 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
 		gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
 
-		//gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER,
-		 //GL2.GL_NEAREST);
-		 //gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER,
-		 //GL2.GL_NEAREST);
-
-		// gl.glTexParameteri(target,GL.GL_TEXTURE_WRAP_S,GL2.GL_CLAMP);
-		// gl.glTexParameteri(target,GL.GL_TEXTURE_WRAP_T,GL2.GL_CLAMP);
-		// null means reserve texture memory, but texels are undefined
-
-		//gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_WRAP_S,
-		//		GL2.GL_CLAMP);
-		//gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_WRAP_T,
-		//		GL2.GL_CLAMP);
-		//g//l.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_WRAP_R,
-		//		GL2.GL_CLAMP);
-		//gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER,
-		//		GL2.GL_LINEAR);
-		//gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER,
-				//GL2.GL_LINEAR);
-
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, envfbo);
-
-		// Attach 2D texture to this FBO
-
 		gl.glBindRenderbuffer(GL2.GL_RENDERBUFFER, envrbo);
-		gl.glRenderbufferStorage(GL2.GL_RENDERBUFFER, GL2.GL_DEPTH_COMPONENT,
-				envTexSize, envTexSize);
-		gl.glFramebufferRenderbuffer(GL2.GL_FRAMEBUFFER,
-				GL2.GL_DEPTH_ATTACHMENT, GL2.GL_RENDERBUFFER,
-				envrbo);
-		if (gl.glCheckFramebufferStatus(GL2.GL_FRAMEBUFFER) == GL2.GL_FRAMEBUFFER_COMPLETE)
-			;// System.out.println("[Viewer] GL_FRAMEBUFFER_COMPLETE!!");
-		else
-			System.out.println("..cazzo ^^");
+		gl.glRenderbufferStorage(GL2.GL_RENDERBUFFER, GL2.GL_DEPTH_COMPONENT,envTexSize, envTexSize);
+		gl.glFramebufferRenderbuffer(GL2.GL_FRAMEBUFFER, GL2.GL_DEPTH_ATTACHMENT, GL2.GL_RENDERBUFFER,envrbo);
+		//if (gl.glCheckFramebufferStatus(GL2.GL_FRAMEBUFFER) == GL2.GL_FRAMEBUFFER_COMPLETE)
+		//	;
+		//else
+		//	;
 
-		// gl.glTexEnvf(GL2.GL_TEXTURE_ENV,GL2.GL_TEXTURE_ENV_MODE,
-		// GL2.GL_REPLACE);
+
 		for (int i = 0; i < 6; i++) {
 
 			int[] targets = { GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -488,13 +447,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 				glu. gluLookAt(0, 0, 0, 0, 0, -1, 0, -1, 0);
 				break;
 			}
-			//gl.glTranslated(potpos[0],  potpos[1],		 potpos[2]);
 			camera.Update(0);
-			
-			
-			//glu.gluLookAt(0, 0, 0,
-			//		forward[0], forward[1],
-			//		forward[2], up[0], up[1], up[2]);
+
 			drawAll(gl, GL2.GL_CCW, 1);
 			drawAll(gl, GL2.GL_CCW, 0);
 

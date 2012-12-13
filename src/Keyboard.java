@@ -73,6 +73,22 @@ public class Keyboard implements KeyListener {
 		case KeyEvent.VK_T:
 			scene.selected_tid_m = (scene.selected_tid_m + 1) % 2;
 			break;
+			
+		case KeyEvent.VK_O:
+			if (scene.fakeH < 256)
+			{
+				scene.fakeH *= 2;
+				scene.fakeW *= 2;
+			}
+			break;
+			
+		case KeyEvent.VK_L:
+			if (scene.fakeH > 2)
+			{
+				scene.fakeH /= 2;
+				scene.fakeW /= 2;
+			}
+			break;
 
 
 		default:
