@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.IntBuffer;
 import java.util.Random;
 import java.util.Vector;
 
@@ -48,6 +49,11 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private Spotlight sl;
 	private Spotlight s2;
 	
+	private IntBuffer intBuffer;
+	private int fbo;
+	private int rbo;
+	private int screenTexture;
+	
 	Vector<Drawable> sceneObjects;
 
 	public Scene() {
@@ -60,6 +66,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		random = new Random();
 		lastTime = startTime = System.nanoTime();
 		sceneObjects = new Vector<Drawable>();
+		intBuffer = IntBuffer.allocate(1);
 		
 	}
 
@@ -69,7 +76,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLoadIdentity();
 		fog.Apply();
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT );
-
+		int nextint = random.nextInt();
 		long now = System.nanoTime();
 		delta = now - lastTime;
 		if (delta - 50000000 > 0)
@@ -78,12 +85,46 @@ public class Scene extends GLJPanel implements GLEventListener {
 		lapsed = now - startTime;
 		lapsed /= 1000; // Can I haz milisecondz? 
 		delta /= 1000;
-
-		//System.out.println("*");
 		camera.Update(delta);
-		Drawable.lapsedTime = lapsed;
-		int nextint = random.nextInt();
+		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, fbo);
+		gl.glBindRenderbuffer(GL2.GL_RENDERBUFFER, rbo);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, screenTexture);
+		gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0,GL2.GL_RGB, 768, 768, 0,GL2.GL_RGB, GL2.GL_UNSIGNED_BYTE, null);
+		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+		gl.glFramebufferTextureARB(GL2.GL_FRAMEBUFFER, GL2.GL_COLOR_ATTACHMENT0, screenTexture, 0);
 		
+		gl.glRenderbufferStorage(GL2.GL_RENDERBUFFER, GL2.GL_DEPTH_STENCIL, 800, 800);
+		gl.glFramebufferRenderbuffer( GL2.GL_FRAMEBUFFER, GL2.GL_DEPTH_ATTACHMENT, GL2.GL_RENDERBUFFER, rbo);
+		gl.glFramebufferRenderbuffer( GL2.GL_FRAMEBUFFER,  GL2.GL_STENCIL_ATTACHMENT,  GL2.GL_RENDERBUFFER, rbo);
+		
+		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT );
+		
+		//System.out.println("*");
+		renderWithMirror(gl, false, nextint);
+		
+		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
+		
+		
+		renderWithMirror(gl, true, nextint);
+		
+		
+
+		gl.glFlush();
+		try {
+			Thread.sleep(3);
+		} catch (InterruptedException e) {
+			// e.printStackTrace();
+		}
+	}
+
+	private void renderWithMirror(GL2 gl, boolean drawScreen, int nextint) {
+		
+		
+		gl.glPushMatrix();
+		Drawable.lapsedTime = lapsed;
+		
+
 		gl.glColorMask(true,true,true,true);
 		gl.glPushMatrix();
 		gl.glScalef(1, 1, -1);
@@ -94,7 +135,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glDisable(GL2.GL_CLIP_PLANE0);
 		gl.glPopMatrix();
 		
-		
+
 		
 		gl.glClear(GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
 		
@@ -128,13 +169,53 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//gl.glColorMask(false,false,false,false);
 		gl.glColorMask(true,true,true,true);
 		drawAll(gl, GL2.GL_CCW, nextint);
+		
+		if(drawScreen)
+		{
+			gl.glFrontFace(GL2.GL_CCW);
+			gl.glUniform1i(texturesOn,1);
+			gl.glBindTexture(GL2.GL_TEXTURE_2D, screenTexture);
 
-		gl.glFlush();
-		try {
-			Thread.sleep(3);
-		} catch (InterruptedException e) {
-			// e.printStackTrace();
+			
+			gl.glPushMatrix();
+			gl.glTranslatef(0, 0, -10);
+			gl.glRotatef(45, 1, 0, 0);
+			gl.glTranslatef(0, 0, -2);
+			gl.glBegin(GL2.GL_TRIANGLES);
+			
+			
+			gl.glColor4f(1, 1, 1,1);
+			gl.glTexCoord2d(1,1);
+			gl.glVertex3f(-2.5f, 5f, 0);
+			
+			gl.glColor4f(1, 1, 1,1);
+			gl.glTexCoord2d(0,1);
+			gl.glVertex3f(2.5f, 5f, 0);
+			
+			gl.glColor4f(1, 1, 1,1);
+			gl.glTexCoord2d(0,0);
+			gl.glVertex3f(2.5f, 2.5f, 0);
+
+			
+			gl.glColor4f(1, 1, 1,1);
+			gl.glTexCoord2d(0,0);
+			gl.glVertex3f(2.5f, 2.5f, 0);
+			
+			gl.glColor4f(1, 1, 1,1);
+			gl.glTexCoord2d(1,0);
+			gl.glVertex3f(-2.5f, 2.5f, 0);
+			
+			gl.glColor4f(1, 1, 1,1);
+			gl.glTexCoord2d(1,1);
+			gl.glVertex3f(-2.5f, 5f, 0);
+			
+			
+			
+			gl.glEnd();
+			gl.glPopMatrix();
 		}
+		
+		gl.glPopMatrix();
 	}
 
 	private void drawAll(GL2 gl, int cull, int nextint) {
@@ -142,7 +223,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 		setGlobalLight(gl, nextint);
 		//s.DrawModels(gl, cull);
 		s.setTexture0(selected_tid_m == 0 ? tid_m : tid_m2);
-		
 		for (int i = 0; i < sceneObjects.size(); i++) {
 			((Drawable)sceneObjects.get(i)).Draw(gl, cull, 1);
 		}
@@ -183,15 +263,37 @@ public class Scene extends GLJPanel implements GLEventListener {
 		loadTextures(gl);
 		createObjects(gl);
 		
+		
+		
+		
 	}
 
 	private void loadTextures(GL2 gl) {
 		gl.glEnable(GL2.GL_TEXTURE_2D);
+		gl.glGenTextures(1, intBuffer);
+		intBuffer.clear();
+		intBuffer.rewind();
+		screenTexture = intBuffer.get(0);
+		intBuffer.clear();
+
 		tid_grass = TextureLoader.setupTextures("./gfx/liscie.png", gl);
-		selected_tid_m = 0;
 		tid_m = TextureLoader.setupTextures("./gfx/m.png", gl);
 		tid_m2 = TextureLoader.setupTextures("./gfx/m2.png", gl);
 		tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
+		selected_tid_m = 0;
+		
+		//tid_grass  = screenTexture;
+		
+		gl.glGenFramebuffers(1, intBuffer);
+		intBuffer.rewind();
+		fbo = intBuffer.get(0);
+		intBuffer.clear();
+		
+		gl.glGenRenderbuffers(1, intBuffer);
+		intBuffer.rewind();
+		rbo = intBuffer.get(0);
+
+		
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 	}
 
@@ -209,13 +311,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 		}
 		
 		GLModel spotlightmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/spot.obj", "./models/spot.mtl", gl);
-		sl = new SpotlightA(texturesOn, GL2.GL_LIGHT2);
-		sl.SetModel(spotlightmodel);
-		//4.5f, 0, 0, -90);
-		sl.SetPos(4.5f, 0, 0);
-		sl.SetAngles(0, -90, 0);
-		
-		sceneObjects.add(sl);
 		
 		//gl, 3, 0, 0, -135
 		s2 = new SpotlightB(texturesOn, GL2.GL_LIGHT3);
@@ -226,10 +321,18 @@ public class Scene extends GLJPanel implements GLEventListener {
 		
 		sceneObjects.add(s2);
 		
+		sl = new SpotlightA(texturesOn, GL2.GL_LIGHT2);
+		sl.SetModel(spotlightmodel);
+		//4.5f, 0, 0, -90);
+		sl.SetPos(4.5f, 0, 0);
+		sl.SetAngles(0, -90, 0);
+		
+		sceneObjects.add(sl);
+		
 		
 		GLModel lampmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/lamp.obj", "./models/lamp.mtl", gl);
 		lamps = new Lamp[6];
-		for (int i = -2; i <= 3; i++)
+		for (int i = 3; i >= -2; i--)
 		{
 			lamps[i+2] = new Lamp(texturesOn);
 			lamps[i+2].SetPos(2.35f * (float) i - 2.35f / 2.0f, 0, 0);
@@ -237,6 +340,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 			lamps[i+2].SetModel(lampmodel);
 			sceneObjects.add(lamps[i+2]);
 		}
+		
+		
 	}
 
 	

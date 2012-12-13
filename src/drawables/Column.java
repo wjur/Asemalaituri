@@ -111,13 +111,13 @@ public class Column extends Drawable {
 		gl.glVertexPointer(3, GL2.GL_FLOAT, 0, vertices_buffer);
 		gl.glTexCoordPointer(2, GL2.GL_FLOAT, 0, tex_buffer);
 
-		gl.glPushMatrix();
+
 
 		gl.glTranslatef(x, y+6f, z);
 		gl.glScalef(0.5f, 4.0f, 0.5f);
 		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, 36);
 
-		gl.glPopMatrix();
+
 
 		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
 		gl.glDisableClientState (GL2.GL_TEXTURE_COORD_ARRAY); 

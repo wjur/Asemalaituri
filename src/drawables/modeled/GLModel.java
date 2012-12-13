@@ -7,6 +7,7 @@ import javax.media.opengl.*;
 
 public class GLModel{
 
+	private static int number = 1;
     private ArrayList vertexsets;
     private ArrayList vertexsetsnorms;
     private ArrayList vertexsetstexs;
@@ -49,6 +50,7 @@ public class GLModel{
         opengldrawtolist(gl);
         numpolys = faces.size();
         cleanup();
+        number++;
     }
 
     private void cleanup(){
@@ -256,7 +258,7 @@ public class GLModel{
         ////////////////////////////////////////
 		/// With Materials if available ////////
 		////////////////////////////////////////
-		this.objectlist = gl.glGenLists(1);
+		this.objectlist = gl.glGenLists(number);
 		
 		int nextmat = -1;
 		int matcount = 0;
@@ -273,7 +275,7 @@ public class GLModel{
 		gl.glNewList(objectlist,GL2.GL_COMPILE);
 		for (int i=0;i<faces.size();i++) {
 			if (i == nextmat) {
-					gl.glEnable(GL2.GL_COLOR_MATERIAL);
+					//gl.glEnable(GL2.GL_COLOR_MATERIAL);
 					gl.glColor4f((materials.getKd(nextmatname))[0],(materials.getKd(nextmatname))[1],(materials.getKd(nextmatname))[2],(materials.getd(nextmatname)));
 				matcount++;
 				if (matcount < totalmats) {
@@ -290,11 +292,11 @@ public class GLModel{
 			//// Quad Begin Header ////
 			int polytype;
 			if (tempfaces.length == 3) {
-				polytype = gl.GL_TRIANGLES;
+				polytype =GL2.GL_TRIANGLES;
 			} else if (tempfaces.length == 4) {
-				polytype = gl.GL_QUADS;
+				polytype = GL2.GL_QUADS;
 			} else {
-				polytype = gl.GL_POLYGON;
+				polytype = GL2.GL_POLYGON;
 			}
 			gl.glBegin(polytype);
 			////////////////////////////
@@ -327,11 +329,13 @@ public class GLModel{
 			
 			
 		}
+		//gl.glDisable(GL2.GL_COLOR_MATERIAL);
 		gl.glEndList();
 	}
     
     public void opengldraw(GL2 gl){
+    	//gl.glEnable(GL2.GL_COLOR_MATERIAL);
         gl.glCallList(objectlist);
-        gl.glDisable(GL2.GL_COLOR_MATERIAL);
+        //gl.glDisable(GL2.GL_COLOR_MATERIAL);
     }
 }
