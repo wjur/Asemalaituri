@@ -1,3 +1,5 @@
+package drawables;
+
 import javax.media.opengl.GL2;
 
 public class Station {

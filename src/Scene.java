@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 
 import com.jogamp.opengl.util.FPSAnimator;
 
+import drawables.*;
+
 @SuppressWarnings("serial")
 public class Scene extends GLJPanel implements GLEventListener {
 
