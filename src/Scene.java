@@ -62,14 +62,13 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private GLU glu;
 	
 	Vector<Drawable> sceneObjects;
-	private int[] cubeMap;
 	private Texture cubemaptexture;
-	private int tid_burak;
+
 	private int envfbo;
 	private int envrbo;
 	private int shaderProgram;
-	private float[] potpos = new float[]{0,0,0};
-
+	private float[] potpos = new float[]{2,3,0};
+	//private float[] potpos = new float[]{0,0,0};
 
 	public Scene() {
 		setFocusable(true);
@@ -148,7 +147,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 
 	private void renderWithMirror(GL2 gl, boolean fakeCamera, int nextint) {
-		
 		
 		gl.glPushMatrix();
 		Drawable.lapsedTime = lapsed;
@@ -402,7 +400,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		
 		
 		//TODO odkomentować
-		gl.glTranslated(potpos[0], potpos[1],		 potpos[2]);
+		
 		
 		
 		//gl.glTranslated(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
@@ -490,7 +488,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 				glu. gluLookAt(0, 0, 0, 0, 0, -1, 0, -1, 0);
 				break;
 			}
+			//gl.glTranslated(potpos[0],  potpos[1],		 potpos[2]);
 			camera.Update(0);
+			
+			
 			//glu.gluLookAt(0, 0, 0,
 			//		forward[0], forward[1],
 			//		forward[2], up[0], up[1], up[2]);
@@ -515,20 +516,11 @@ public class Scene extends GLJPanel implements GLEventListener {
 		intBuffer.rewind();
 		screenTexture = intBuffer.get(0);
 		intBuffer.clear();
-		
-		intBuffer = IntBuffer.allocate(6);
-		gl.glGenTextures(6, intBuffer);
-		intBuffer.clear();
-		intBuffer.rewind();
-		cubeMap = intBuffer.array();
-		intBuffer.clear();
-		intBuffer = IntBuffer.allocate(1);
 
 		tid_grass = TextureLoader.setupTextures("./gfx/liscie.png", gl);
 		tid_m = TextureLoader.setupTextures("./gfx/m.png", gl);
 		tid_m2 = TextureLoader.setupTextures("./gfx/m2.png", gl);
 		tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
-		tid_burak = TextureLoader.setupTextures("./gfx/burakocos.png", gl);
 		selected_tid_m = 0;
 		
 		//tid_grass  = screenTexture;
