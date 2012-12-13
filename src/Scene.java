@@ -68,6 +68,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private int envfbo;
 	private int envrbo;
 	private int shaderProgram;
+	private float[] potpos = new float[]{0,0,0};
 
 
 	public Scene() {
@@ -112,7 +113,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
 		gl.glFramebufferTextureARB(GL2.GL_FRAMEBUFFER, GL2.GL_COLOR_ATTACHMENT0, screenTexture, 0);
 		
-		gl.glRenderbufferStorage(GL2.GL_RENDERBUFFER, GL2.GL_DEPTH_STENCIL, 800, 800);
+		gl.glRenderbufferStorage(GL2.GL_RENDERBUFFER, GL2.GL_DEPTH_STENCIL, width, width);
 		gl.glFramebufferRenderbuffer( GL2.GL_FRAMEBUFFER, GL2.GL_DEPTH_ATTACHMENT, GL2.GL_RENDERBUFFER, rbo);
 		gl.glFramebufferRenderbuffer( GL2.GL_FRAMEBUFFER,  GL2.GL_STENCIL_ATTACHMENT,  GL2.GL_RENDERBUFFER, rbo);
 		
@@ -160,7 +161,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glEnable(GL2.GL_CLIP_PLANE0);
 		gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{0.0,0.0,-1,4}, 0);
 		drawAll(gl, GL2.GL_CW, nextint);
-		drawTeapotEnvMap(gl);
+		//drawTeapotEnvMap(gl);
 		gl.glDisable(GL2.GL_CLIP_PLANE0);
 		gl.glPopMatrix();
 		
@@ -353,11 +354,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
 		gl.glPushMatrix();
 		gl.glColor3d(1, 1, 1);
-		gl.glTranslatef(2, 4, 0);
+		//gl.glTranslatef(2, 4, 0);
 		
 		//TODO odkomentowac
-		//gl.glTranslated(envSphereCenter[0], envSphereCenter[1],
-		//		envSphereCenter[2]);
+		gl.glTranslated(potpos[0], potpos[1], potpos[2]);
 		
 		// gl.glEnable(GL2.GL_TEXTURE_2D);
 		gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
@@ -369,9 +369,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 		// gl.glEnable(GL2.GL_NORMALIZE);
 	
 		//glut.glutSolidSphere(0.3, 20, 20);
-		//glut.glutSolidCube(0.4f);
-		gl.glFrontFace(GL2.GL_CW);
-		glut.glutSolidTeapot(0.3);
+		
+		
+		gl.glFrontFace(GL2.GL_CCW);
+		//glut.glutSolidTeapot(0.3);
+		glut.glutSolidSphere(0.3, 20, 20);
+		//glut.glutSolidCube(1f);
 		gl.glPopMatrix();
 
 		gl.glDisable(GL2.GL_TEXTURE_GEN_S);
@@ -392,16 +395,14 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
 
-		glu.gluPerspective(90, 1, 0.1, 40);
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		glu.gluPerspective(90, 1, 0.1, 400);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 		
 		
 		//TODO odkomentować
-		//gl.glTranslated(-envSphereCenter[0], -envSphereCenter[1],
-		//		 -envSphereCenter[2]);
+		gl.glTranslated(potpos[0], potpos[1],		 potpos[2]);
 		
 		
 		//gl.glTranslated(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
@@ -410,6 +411,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 		 
 		 
 		gl.glBindTexture(GL2.GL_TEXTURE_CUBE_MAP, cubemaptexture.getTextureObject(gl));
+		
+		gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP);
+		gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP);
+		gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_WRAP_R, GL2.GL_CLAMP);
+		gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
+		gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
 
 		//gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER,
 		 //GL2.GL_NEAREST);
@@ -462,7 +469,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 					GL2.GL_COLOR_ATTACHMENT0, target, cubemaptexture.getTextureObject(gl), 0);
 
 			gl.glClear(GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT);
-
 			gl.glPushMatrix();
 			switch (i) {
 			case 0:
@@ -484,9 +490,11 @@ public class Scene extends GLJPanel implements GLEventListener {
 				glu. gluLookAt(0, 0, 0, 0, 0, -1, 0, -1, 0);
 				break;
 			}
+			camera.Update(0);
 			//glu.gluLookAt(0, 0, 0,
 			//		forward[0], forward[1],
 			//		forward[2], up[0], up[1], up[2]);
+			drawAll(gl, GL2.GL_CCW, 1);
 			drawAll(gl, GL2.GL_CCW, 0);
 
 			gl.glPopMatrix();
