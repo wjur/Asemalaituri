@@ -8,9 +8,8 @@ import com.jogamp.common.nio.Buffers;
 
 
 public class Column extends Drawable {
-	public Column(int sampler0, int sampler1, int texturesOn, int texture0,
-			int texture1) {
-		super(sampler0, sampler1, texturesOn, texture0, texture1);
+	public Column(int sampler0,int texturesOn, int texture0) {
+		super(sampler0, -1, texturesOn, texture0, -1);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -93,9 +92,9 @@ public class Column extends Drawable {
 	static FloatBuffer colors_buffer = Buffers.newDirectFloatBuffer(colors1);
 	static FloatBuffer tex_buffer = Buffers.newDirectFloatBuffer(tex1);
 	
-	public static void draw(GL2 gl, float x, float y, float z, int tid, int texturesOn) {
-		gl.glUniform1i(texturesOn,1);
-		gl.glBindTexture(GL2.GL_TEXTURE_2D, tid);
+	public void draw(GL2 gl, int cull) { //float x, float y, float z, int tid, int texturesOn) {
+		gl.glUniform1i(super.texturesOn,1);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, super.texture0);
 		float[] rgba = { 0.1f, 0.1f, 0.1f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,
@@ -124,5 +123,11 @@ public class Column extends Drawable {
 		gl.glDisableClientState (GL2.GL_TEXTURE_COORD_ARRAY); 
 		//gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+	}
+	
+	@Override
+	public void DrawModels(GL2 gl, int cull) {
+		// TODO Auto-generated method stub
+		draw(gl, cull);
 	}
 }

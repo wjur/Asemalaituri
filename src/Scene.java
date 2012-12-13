@@ -40,6 +40,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 	public int selected_tid_m;
 	private int fogOn;
 	private Station s;
+	
+	private Column[] columns;
 
 	public Scene() {
 		setFocusable(true);
@@ -134,7 +136,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//Station.drawExterior(gl, texturesOn);
 		//Station.drawInterior(gl, tid_peron, selected_tid_m == 0 ? tid_m : tid_m2, texturesOn, sampler0, sampler1);
 		for (int i = -2; i <= 2; i++)
-			Column.draw(gl, 0, 0, 7 * (float) i, tid_grass, texturesOn);
+		{
+			columns[i+2].Draw(gl, cull, 0);
+			//Column.draw(gl, 0, 0, 7 * (float) i, tid_grass, texturesOn);
+		}
 
 		for (int i = -2; i <= 3; i++)
 			drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
@@ -293,7 +298,14 @@ public class Scene extends GLJPanel implements GLEventListener {
 		 */
 		
 		s = new Station(sampler0, sampler1, texturesOn, tid_m, tid_peron);
-		//gl.glB
+		
+		columns = new Column[5];
+		
+		for (int i = -2; i <= 2; i++)
+		{
+			columns[i+2] = new Column(sampler0, texturesOn, tid_grass);
+			((Drawable)columns[i+2]).SetPos(0, 0,  7 * (float) i);
+		}
 	}
 
 	
