@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Random;
+import java.util.Vector;
+
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
@@ -48,6 +50,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private Lamp[] lamps;
 	private Spotlight sl;
 	private Spotlight s2;
+	
+	Vector sceneObjects;
 
 	public Scene() {
 		setFocusable(true);
@@ -58,6 +62,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		width = height = 800;
 		random = new Random();
 		lastTime = startTime = System.nanoTime();
+		sceneObjects = new Vector<Drawable>();
 		
 	}
 
@@ -139,7 +144,11 @@ public class Scene extends GLJPanel implements GLEventListener {
 		setGlobalLight(gl);
 		//s.DrawModels(gl, cull);
 		s.setTexture0(selected_tid_m == 0 ? tid_m : tid_m2);
-		s.Draw(gl, cull, 0);
+		
+		for (int i = 0; i < sceneObjects.size(); i++) {
+			((Drawable)sceneObjects.get(i)).Draw(gl, cull, 0);
+		}
+		/*s.Draw(gl, cull, 0);
 		//Station.drawExterior(gl, texturesOn);
 		//Station.drawInterior(gl, tid_peron, selected_tid_m == 0 ? tid_m : tid_m2, texturesOn, sampler0, sampler1);
 		for (int i = -2; i <= 2; i++)
@@ -154,9 +163,11 @@ public class Scene extends GLJPanel implements GLEventListener {
 			lamps[i+2].Draw(gl, cull, 0);
 		}
 		
+		
+		
 
 		sl.Draw(gl, cull, 0);
-		s2.Draw(gl, cull, 0);
+		s2.Draw(gl, cull, 0);*/
 		//drawSpotA(gl, 4.5f, 0, 0, -90);
 		//drawSpotB(gl, 3, 0, 0, -135);
 	}
@@ -301,6 +312,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		 */
 		
 		s = new Station(sampler0, sampler1, texturesOn, tid_m, tid_peron);
+		sceneObjects.add(s);
 		
 		columns = new Column[5];
 		
@@ -308,6 +320,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		{
 			columns[i+2] = new Column(sampler0, texturesOn, tid_grass);
 			((Drawable)columns[i+2]).SetPos(0, 0,  7 * (float) i);
+			sceneObjects.add(columns[i+2]);
 		}
 		
 		GLModel spotlightmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/spot.obj", "./models/spot.mtl", gl);
@@ -317,6 +330,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		sl.SetPos(4.5f, 0, 0);
 		sl.SetAngles(0, -90, 0);
 		
+		sceneObjects.add(sl);
 		
 		//gl, 3, 0, 0, -135
 		s2 = new Spotlight(texturesOn, GL2.GL_LIGHT3);
@@ -324,6 +338,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//4.5f, 0, 0, -90);
 		s2.SetPos(3f, 0, 0);
 		s2.SetAngles(0, -135, 0);
+		
+		sceneObjects.add(s2);
 		
 		
 		GLModel lampmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/lamp.obj", "./models/lamp.mtl", gl);
@@ -334,6 +350,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 			lamps[i+2].SetPos(2.35f * (float) i - 2.35f / 2.0f, 0, 0);
 			//drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
 			lamps[i+2].SetModel(lampmodel);
+			sceneObjects.add(lamps[i+2]);
 		}
 		
 	}
