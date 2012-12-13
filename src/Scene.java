@@ -87,6 +87,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//System.out.println("*");
 		camera.Update(delta);
 		Drawable.lapsedTime = lapsed;
+		int nextint = random.nextInt();
 		
 		gl.glColorMask(true,true,true,true);
 		gl.glPushMatrix();
@@ -94,7 +95,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glTranslatef(0, 0, -8);
 		gl.glEnable(GL2.GL_CLIP_PLANE0);
 		gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{0.0,0.0,-1,4}, 0);
-		drawAll(gl, GL2.GL_CW);
+		drawAll(gl, GL2.GL_CW, nextint);
 		gl.glDisable(GL2.GL_CLIP_PLANE0);
 		gl.glPopMatrix();
 		
@@ -131,7 +132,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		
 		//gl.glColorMask(false,false,false,false);
 		gl.glColorMask(true,true,true,true);
-		drawAll(gl, GL2.GL_CCW);
+		drawAll(gl, GL2.GL_CCW, nextint);
 
 		gl.glFlush();
 		try {
@@ -141,9 +142,9 @@ public class Scene extends GLJPanel implements GLEventListener {
 		}
 	}
 
-	private void drawAll(GL2 gl, int cull) {
+	private void drawAll(GL2 gl, int cull, int nextint) {
 		gl.glFrontFace(cull);
-		setGlobalLight(gl);
+		setGlobalLight(gl, nextint);
 		//s.DrawModels(gl, cull);
 		s.setTexture0(selected_tid_m == 0 ? tid_m : tid_m2);
 		
@@ -470,11 +471,11 @@ public class Scene extends GLJPanel implements GLEventListener {
 		return true;
 	}
 
-	private void setGlobalLight(GL2 gl) {
+	private void setGlobalLight(GL2 gl, int nextint) {
 		float f1 = (float) (Math.cos(lapsed * 0.00001f / (5 * 3.14)));
 		float f2 = (float) (Math.sin(lapsed * 0.00001f / (2 * 3.14)));
 
-		float s = (f1 < 0 && f2 < 0) ? 1 : ((random.nextInt() % 100 > 90) ? 1
+		float s = (f1 < 0 && f2 < 0) ? 1 : ((nextint % 100 > 90) ? 1
 				: 0);
 
 		float SHINE_ALL_DIRECTIONS = 1;
