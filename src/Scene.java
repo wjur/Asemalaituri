@@ -27,17 +27,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private FPSAnimator animator;
 	public Camera camera;
 	public Fog fog;
-
-	//private GLModel spotModel = null;
-	//private GLModel lampModel = null;
-
 	private Random random;
 	
 	public int tid_grass;
 
 	long startTime, lastTime;
 	long lapsed, delta;
-	private boolean useShaders = true;
 	private int tid_m;
 	private int tid_m2;
 	private int tid_peron;
@@ -53,7 +48,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private Spotlight sl;
 	private Spotlight s2;
 	
-	Vector sceneObjects;
+	Vector<Drawable> sceneObjects;
 
 	public Scene() {
 		setFocusable(true);
@@ -155,111 +150,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		for (int i = 0; i < sceneObjects.size(); i++) {
 			((Drawable)sceneObjects.get(i)).Draw(gl, cull, 0);
 		}
-		/*s.Draw(gl, cull, 0);
-		//Station.drawExterior(gl, texturesOn);
-		//Station.drawInterior(gl, tid_peron, selected_tid_m == 0 ? tid_m : tid_m2, texturesOn, sampler0, sampler1);
-		for (int i = -2; i <= 2; i++)
-		{
-			columns[i+2].Draw(gl, cull, 0);
-			//Column.draw(gl, 0, 0, 7 * (float) i, tid_grass, texturesOn);
-		}
-
-		for (int i = -2; i <= 3; i++)
-		{
-			//	drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
-			lamps[i+2].Draw(gl, cull, 0);
-		}
-		
-		
-		
-
-		sl.Draw(gl, cull, 0);
-		s2.Draw(gl, cull, 0);*/
-		//drawSpotA(gl, 4.5f, 0, 0, -90);
-		//drawSpotB(gl, 3, 0, 0, -135);
 	}
-
-	/*
-	private void drawSpotA(GL2 gl, float x, float y, float z, float angle) {
-		float f1 = Math
-				.abs((float) (Math.cos(lapsed * 0.00001f / (10 * 3.14))));
-		gl.glPushMatrix();
-		gl.glTranslatef(0 + x, 3.6f + y, 0 + z);
-		gl.glScalef(40, 40, 40);
-		gl.glRotatef(angle, 0, 1, 0);
-		float SHINE_ALL_DIRECTIONS = 1;
-		float[] lightPos = { 0, 0.0235f, 0.01f, SHINE_ALL_DIRECTIONS };
-		float[] lightDir = { 0, 0, 1, SHINE_ALL_DIRECTIONS };
-
-		
-
-		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
-		float[] lightColorSpecular = { 1f, 0.5f, 1f, 0.3f };
-
-		// Set light parameters.
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, lightPos, 0);
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_SPOT_DIRECTION, lightDir, 0);
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_AMBIENT, lightColorAmbient, 0);
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_SPECULAR, lightColorSpecular, 0);
-		gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, lightColorSpecular, 0);
-		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_LINEAR_ATTENUATION, 0.05f);
-		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
-		gl.glLightf(GL2.GL_LIGHT2, GL2.GL_SPOT_CUTOFF, 60 * f1);
-		gl.glEnable(GL2.GL_LIGHT2);
-		gl.glUniform1i(texturesOn,0);
-		drawSpot(gl, x, y, z, angle);
-
-		gl.glPopMatrix();
-	}
-
-	private void drawSpotB(GL2 gl, float x, float y, float z, float angle) {
-		float f1 = Math.abs((float) (Math.cos(lapsed * 0.00001f / (5 * 3.14))));
-		float f2 = Math
-				.abs((float) (Math.cos(lapsed * 0.00001f / (20 * 3.14))));
-		gl.glPushMatrix();
-		gl.glTranslatef(0 + x, 3.6f + y, 0 + z);
-		gl.glScalef(40, 40, 40);
-		gl.glRotatef(angle, 0, 1, 0);
-		float SHINE_ALL_DIRECTIONS = 1;
-		float[] lightPos = { 0, 0.0235f, 0.01f, SHINE_ALL_DIRECTIONS };
-		float[] lightDir = { 0, 0, 1, SHINE_ALL_DIRECTIONS };
-
-		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
-		float[] lightColorSpecular = { 0f, f1, (1 - f1), 1f };
-
-		// Set light parameters.
-		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, lightPos, 0);
-		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_SPOT_DIRECTION, lightDir, 0);
-		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_AMBIENT, lightColorAmbient, 0);
-		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_SPECULAR, lightColorSpecular, 0);
-		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, lightColorSpecular, 0);
-		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_LINEAR_ATTENUATION, 0.05f);
-		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
-		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_SPOT_CUTOFF, 60 - 20 * f2);
-		gl.glEnable(GL2.GL_LIGHT3);
-		gl.glUniform1i(texturesOn,0);
-		drawSpot(gl, x, y, z, angle);
-
-		gl.glPopMatrix();
-	}*/
-
-	/*private void drawSpot(GL2 gl, float x, float y, float z, float angle) {
-		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-		spotModel.opengldraw(gl);// .draw(gl);
-
-	}*/
-
-	/*
-	private void drawLamp(GL2 gl, float x, float y, float z) {
-		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-		gl.glPushMatrix();
-		gl.glScalef(3, 3, 3);
-		gl.glRotatef(90, 0, 1, 0);
-		gl.glTranslatef(0 + x, 3 + y, 0 + z);
-		gl.glUniform1i(texturesOn,0);
-		lampModel.opengldraw(gl);
-		gl.glPopMatrix();
-	}*/
 
 	@Override
 	public void dispose(GLAutoDrawable arg0) {
@@ -283,41 +174,28 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
-		
-
-		if (false == loadModels(gl)) {
-			System.exit(1);
-		}
 
 		glu.gluPerspective(1, (double) getWidth() / getHeight(), 0.3, 50);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		
-		if (!useShaders)
-		{
-			gl.glEnable(GL2.GL_LIGHTING);
-		}
-		else
-		{
-			setShaders(gl);
-		}
+
+		setShaders(gl);
+		loadTextures(gl);
+		createObjects(gl);
 		
-		
-		
+	}
+
+	private void loadTextures(GL2 gl) {
 		gl.glEnable(GL2.GL_TEXTURE_2D);
 		tid_grass = TextureLoader.setupTextures("./gfx/liscie.png", gl);
 		selected_tid_m = 0;
 		tid_m = TextureLoader.setupTextures("./gfx/m.png", gl);
 		tid_m2 = TextureLoader.setupTextures("./gfx/m2.png", gl);
 		tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
-		System.out.print(tid_grass);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-		
-		/*
-		 * texturesOn = gl.glGetUniformLocation(shaderProgram, "texturesOn");
-        sampler0 = gl.glGetUniformLocation(shaderProgram, "color_texture0");
-        sampler1 = gl.glGetUniformLocation(shaderProgram, "color_texture1");
-		 */
-		
+	}
+
+	private void createObjects(GL2 gl) {
 		s = new Station(sampler0, sampler1, texturesOn, tid_m, tid_peron);
 		sceneObjects.add(s);
 		
@@ -359,7 +237,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 			lamps[i+2].SetModel(lampmodel);
 			sceneObjects.add(lamps[i+2]);
 		}
-		
 	}
 
 	
@@ -456,19 +333,6 @@ public class Scene extends GLJPanel implements GLEventListener {
         
         fog = new Fog(fogOn, gl);
         
-	}
-
-	private Boolean loadModels(GL2 gl) {
-		//spotModel = ModelLoaderOBJ.LoadModel("./models/spot.obj",
-		//		"./models/spot.mtl", gl);
-		
-		
-		//lampModel = ModelLoaderOBJ.LoadModel("./models/lamp.obj",
-		//		"./models/lamp.mtl", gl);
-		//if (spotModel == null || lampModel == null) {
-		//	return false;
-		//}
-		return true;
 	}
 
 	private void setGlobalLight(GL2 gl, int nextint) {
