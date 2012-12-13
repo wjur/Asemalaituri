@@ -72,7 +72,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glColorMask(true,true,true,true);
 		gl.glPushMatrix();
 		gl.glScalef(1, 1, -1);
-		gl.glTranslatef(0, 0, 8);
+		gl.glTranslatef(0, 0, -8);
 		drawAll(gl, GL2.GL_CW);
 		
 		gl.glPopMatrix();
@@ -90,12 +90,18 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glColorMask(false,false,false,false);
 		
 		
+		gl.glFrontFace(GL2.GL_CCW);
 		gl.glBegin(GL2.GL_QUADS);
-		gl.glVertex3f(-2.5f, 5f, -4);
-		gl.glVertex3f(2.5f, 5f, -4);
-		gl.glVertex3f(2.5f, -5f, -4);
-		gl.glVertex3f(-2.5f, -5f, -4);
+		gl.glColor4f(0,0,0,0.2f);
+		gl.glVertex3f(-2.5f, 5f, 4);
+		gl.glColor4f(0,0,0,0.2f);
+		gl.glVertex3f(2.5f, 5f, 4);
+		gl.glColor4f(0,0,0,0.2f);
+		gl.glVertex3f(2.5f, -2.5f, 4);
+		gl.glColor4f(0,0,0,0.2f);
+		gl.glVertex3f(-2.5f, -2.5f, 4);
 		gl.glEnd();
+		
 		
 		gl.glStencilOp(GL2.GL_KEEP, GL2.GL_KEEP, GL2.GL_KEEP);
 		gl.glStencilMask(GL2.GL_NOTEQUAL);
