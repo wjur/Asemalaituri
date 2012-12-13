@@ -3,7 +3,8 @@ varying float att[4];
 
 void main()
 {	
-	gl_Position = ftransform();		
+	gl_Position = ftransform();
+	gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex;	
 	normal = gl_NormalMatrix * gl_Normal;
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	gl_TexCoord[1] = gl_MultiTexCoord1;
