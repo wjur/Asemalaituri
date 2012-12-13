@@ -74,6 +74,7 @@ public class Keyboard implements KeyListener {
 			scene.selected_tid_m = (scene.selected_tid_m + 1) % 2;
 			break;
 
+
 		default:
 			break;
 		}

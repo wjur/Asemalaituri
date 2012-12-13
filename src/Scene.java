@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.Random;
 import java.util.Vector;
@@ -7,11 +8,16 @@ import java.util.Vector;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
 import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.gl2.GLUT;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 import drawables.*;
 import drawables.modeled.GLModel;
@@ -56,6 +62,13 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private GLU glu;
 	
 	Vector<Drawable> sceneObjects;
+	private int[] cubeMap;
+	private Texture cubemaptexture;
+	private int tid_burak;
+	private int envfbo;
+	private int envrbo;
+	private int shaderProgram;
+
 
 	public Scene() {
 		setFocusable(true);
@@ -78,6 +91,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLoadIdentity();
 		fog.Apply();
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT );
+
 		int nextint = random.nextInt();
 		long now = System.nanoTime();
 		delta = now - lastTime;
@@ -87,6 +101,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 		lapsed = now - startTime;
 		lapsed /= 1000; // Can I haz milisecondz? 
 		delta /= 1000;
+		
+		renderToEnvMap(gl);
 		
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, fbo);
 		gl.glBindRenderbuffer(GL2.GL_RENDERBUFFER, rbo);
@@ -120,7 +136,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 		renderWithMirror(gl, false, nextint);
 		
 		
-
 		gl.glFlush();
 		try {
 			Thread.sleep(3);
@@ -128,6 +143,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 			// e.printStackTrace();
 		}
 	}
+	
+
 
 	private void renderWithMirror(GL2 gl, boolean fakeCamera, int nextint) {
 		
@@ -143,6 +160,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glEnable(GL2.GL_CLIP_PLANE0);
 		gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{0.0,0.0,-1,4}, 0);
 		drawAll(gl, GL2.GL_CW, nextint);
+		drawTeapotEnvMap(gl);
 		gl.glDisable(GL2.GL_CLIP_PLANE0);
 		gl.glPopMatrix();
 		
@@ -158,7 +176,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 		
 		gl.glColorMask(false,false,false,false);
 		
-		
+		//LUSTRO
+		/*
 		gl.glFrontFace(GL2.GL_CCW);
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glColor4f(0,0,0,0.2f);
@@ -169,7 +188,25 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glVertex3f(2.5f, -2.5f, 4);
 		gl.glColor4f(0,0,0,0.2f);
 		gl.glVertex3f(-2.5f, -2.5f, 4);
-		gl.glEnd();
+		gl.glEnd();*/
+		
+		float DEG2RAD = 3.14159f/180f;
+		float xradius = 4;
+		float yradius = 2;
+		   gl.glEnable(GL2.GL_BLEND);
+		   gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_CONSTANT_ALPHA);
+		   gl.glBegin(GL2.GL_POLYGON);
+		   
+		   for (int i=0; i < 360; i++)
+		   {
+		      //convert degrees into radians
+		      float degInRad = i*DEG2RAD;
+		      gl.glColor4f(0,0,0,0.5f);
+		      gl.glVertex3f((float)(Math.cos(degInRad)*xradius),(float)(Math.sin(degInRad)*yradius)+5, 4);
+		   }
+		 
+		   gl.glEnd();
+		   gl.glDisable(GL2.GL_BLEND);
 		
 		
 		gl.glStencilOp(GL2.GL_KEEP, GL2.GL_KEEP, GL2.GL_KEEP);
@@ -180,6 +217,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//gl.glColorMask(false,false,false,false);
 		gl.glColorMask(true,true,true,true);
 		drawAll(gl, GL2.GL_CCW, nextint);
+		drawTeapotEnvMap(gl);
 		
 		if(!fakeCamera)
 		{
@@ -225,7 +263,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 			gl.glEnd();
 			gl.glPopMatrix();
 		}
-		
+		gl.glDisable(GL2.GL_BLEND);
 		gl.glPopMatrix();
 	}
 
@@ -274,11 +312,194 @@ public class Scene extends GLJPanel implements GLEventListener {
 		loadTextures(gl);
 		createObjects(gl);
 		
-		
-		
+		cubemaptexture = loadCubemap(gl);
 		
 	}
+	
+	public static Texture loadCubemap(GL2 gl) {
+		Texture cubemap = TextureIO.newTexture(GL2.GL_TEXTURE_CUBE_MAP);
+		int[] targets = { GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+				GL2.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+				GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+				GL2.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+				GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+				GL2.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
+		for (int i = 0; i < 6; i++) {
 
+			TextureData data;
+			try {
+				data = TextureIO.newTextureData(GLProfile.getDefault(), Thread
+						.currentThread().getContextClassLoader()
+						.getResourceAsStream("./liscie.png"), false, "png");
+				cubemap.updateImage(gl, data, targets[i]);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return cubemap;
+	}
+	private static int envTexSize = 256;
+	
+	//TODO przeformatowac
+	protected void drawTeapotEnvMap(GL2 gl) {
+		gl.glUseProgram(0);
+		gl.glActiveTexture(GL2.GL_TEXTURE1);
+		gl.glDisable(GL2.GL_TEXTURE_2D);
+		gl.glActiveTexture(GL2.GL_TEXTURE0);
+		
+		cubemaptexture.bind(gl);
+		gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
+		gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
+		gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
+		gl.glPushMatrix();
+		gl.glColor3d(1, 1, 1);
+		gl.glTranslatef(2, 4, 0);
+		
+		//TODO odkomentowac
+		//gl.glTranslated(envSphereCenter[0], envSphereCenter[1],
+		//		envSphereCenter[2]);
+		
+		// gl.glEnable(GL2.GL_TEXTURE_2D);
+		gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
+		gl.glEnable(GL2.GL_TEXTURE_GEN_S);
+		gl.glEnable(GL2.GL_TEXTURE_GEN_T);
+		gl.glEnable(GL2.GL_TEXTURE_GEN_R);
+
+		GLUT glut = new GLUT();
+		// gl.glEnable(GL2.GL_NORMALIZE);
+	
+		//glut.glutSolidSphere(0.3, 20, 20);
+		//glut.glutSolidCube(0.4f);
+		gl.glFrontFace(GL2.GL_CW);
+		glut.glutSolidTeapot(0.3);
+		gl.glPopMatrix();
+
+		gl.glDisable(GL2.GL_TEXTURE_GEN_S);
+		gl.glDisable(GL2.GL_TEXTURE_GEN_T);
+		gl.glDisable(GL2.GL_TEXTURE_GEN_R);
+
+		gl.glDisable(GL2.GL_TEXTURE_CUBE_MAP);
+
+		gl.glUseProgram(shaderProgram);
+	}
+	
+	private void renderToEnvMap(GL2 gl) {
+		gl.glActiveTexture(GL2.GL_TEXTURE0);
+		gl.glPushAttrib(GL2.GL_VIEWPORT_BIT);
+		gl.glViewport(0, 0, envTexSize, envTexSize);
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+		GLU glu = new GLU();
+
+		glu.gluPerspective(90, 1, 0.1, 40);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+		
+		
+		//TODO odkomentować
+		//gl.glTranslated(-envSphereCenter[0], -envSphereCenter[1],
+		//		 -envSphereCenter[2]);
+		
+		
+		//gl.glTranslated(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+		 //positionCamera(gl);
+
+		 
+		 
+		gl.glBindTexture(GL2.GL_TEXTURE_CUBE_MAP, cubemaptexture.getTextureObject(gl));
+
+		//gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER,
+		 //GL2.GL_NEAREST);
+		 //gl.glTexParameteri(GL.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER,
+		 //GL2.GL_NEAREST);
+
+		// gl.glTexParameteri(target,GL.GL_TEXTURE_WRAP_S,GL2.GL_CLAMP);
+		// gl.glTexParameteri(target,GL.GL_TEXTURE_WRAP_T,GL2.GL_CLAMP);
+		// null means reserve texture memory, but texels are undefined
+
+		//gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_WRAP_S,
+		//		GL2.GL_CLAMP);
+		//gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_WRAP_T,
+		//		GL2.GL_CLAMP);
+		//g//l.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_WRAP_R,
+		//		GL2.GL_CLAMP);
+		//gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MIN_FILTER,
+		//		GL2.GL_LINEAR);
+		//gl.glTexParameteri(GL2.GL_TEXTURE_CUBE_MAP, GL2.GL_TEXTURE_MAG_FILTER,
+				//GL2.GL_LINEAR);
+
+		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, envfbo);
+
+		// Attach 2D texture to this FBO
+
+		gl.glBindRenderbuffer(GL2.GL_RENDERBUFFER, envrbo);
+		gl.glRenderbufferStorage(GL2.GL_RENDERBUFFER, GL2.GL_DEPTH_COMPONENT,
+				envTexSize, envTexSize);
+		gl.glFramebufferRenderbuffer(GL2.GL_FRAMEBUFFER,
+				GL2.GL_DEPTH_ATTACHMENT, GL2.GL_RENDERBUFFER,
+				envrbo);
+		if (gl.glCheckFramebufferStatus(GL2.GL_FRAMEBUFFER) == GL2.GL_FRAMEBUFFER_COMPLETE)
+			;// System.out.println("[Viewer] GL_FRAMEBUFFER_COMPLETE!!");
+		else
+			System.out.println("..cazzo ^^");
+
+		// gl.glTexEnvf(GL2.GL_TEXTURE_ENV,GL2.GL_TEXTURE_ENV_MODE,
+		// GL2.GL_REPLACE);
+		for (int i = 0; i < 6; i++) {
+
+			int[] targets = { GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+					GL2.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+					GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+					GL2.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+					GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+					GL2.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
+			int target = targets[i];
+
+			gl.glFramebufferTexture2D(GL2.GL_FRAMEBUFFER,
+					GL2.GL_COLOR_ATTACHMENT0, target, cubemaptexture.getTextureObject(gl), 0);
+
+			gl.glClear(GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT);
+
+			gl.glPushMatrix();
+			switch (i) {
+			case 0:
+				glu.gluLookAt(0, 0, 0, 1, 0, 0, 0, -1, 0);
+				break;
+			case 1:
+				glu.gluLookAt(0, 0, 0, -1, 0, 0, 0, -1, 0);
+				break;
+			case 2:
+				glu.gluLookAt(0, 0, 0, 0, 1, 0, 0, 0, 1);
+				break;
+			case 3:
+				 glu.gluLookAt(0, 0, 0, 0, -1, 0,  0, 0, -1);
+				break;
+			case 4:
+				 glu.gluLookAt(0, 0, 0, 0, 0, 1, 0, -1, 0);
+				break;
+			case 5:
+				glu. gluLookAt(0, 0, 0, 0, 0, -1, 0, -1, 0);
+				break;
+			}
+			//glu.gluLookAt(0, 0, 0,
+			//		forward[0], forward[1],
+			//		forward[2], up[0], up[1], up[2]);
+			drawAll(gl, GL2.GL_CCW, 0);
+
+			gl.glPopMatrix();
+		}
+		gl.glPopMatrix();
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glPopMatrix();
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glPopAttrib();
+		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
+		gl.glBindTexture(GL2.GL_TEXTURE_CUBE_MAP, 0);
+	}
+	
 	private void loadTextures(GL2 gl) {
 		gl.glEnable(GL2.GL_TEXTURE_2D);
 		gl.glGenTextures(1, intBuffer);
@@ -286,11 +507,20 @@ public class Scene extends GLJPanel implements GLEventListener {
 		intBuffer.rewind();
 		screenTexture = intBuffer.get(0);
 		intBuffer.clear();
+		
+		intBuffer = IntBuffer.allocate(6);
+		gl.glGenTextures(6, intBuffer);
+		intBuffer.clear();
+		intBuffer.rewind();
+		cubeMap = intBuffer.array();
+		intBuffer.clear();
+		intBuffer = IntBuffer.allocate(1);
 
 		tid_grass = TextureLoader.setupTextures("./gfx/liscie.png", gl);
 		tid_m = TextureLoader.setupTextures("./gfx/m.png", gl);
 		tid_m2 = TextureLoader.setupTextures("./gfx/m2.png", gl);
 		tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
+		tid_burak = TextureLoader.setupTextures("./gfx/burakocos.png", gl);
 		selected_tid_m = 0;
 		
 		//tid_grass  = screenTexture;
@@ -300,9 +530,19 @@ public class Scene extends GLJPanel implements GLEventListener {
 		fbo = intBuffer.get(0);
 		intBuffer.clear();
 		
+		gl.glGenFramebuffers(1, intBuffer);
+		intBuffer.rewind();
+		envfbo = intBuffer.get(0);
+		intBuffer.clear();
+		
 		gl.glGenRenderbuffers(1, intBuffer);
 		intBuffer.rewind();
 		rbo = intBuffer.get(0);
+		
+		gl.glGenRenderbuffers(1, intBuffer);
+		intBuffer.rewind();
+		envrbo = intBuffer.get(0);
+
 
 		
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
@@ -428,7 +668,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 
         //Each shaderProgram must have
         //one vertex shader and one fragment shader.
-        int shaderProgram = gl.glCreateProgram();
+        shaderProgram = gl.glCreateProgram();
         gl.glAttachShader(shaderProgram, vertShader);
         gl.glAttachShader(shaderProgram, fragShader);
 
