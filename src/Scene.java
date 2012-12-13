@@ -12,6 +12,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 import drawables.*;
 import drawables.modeled.GLModel;
+import drawables.modeled.Lamp;
 import drawables.modeled.Spotlight;
 
 @SuppressWarnings("serial")
@@ -44,6 +45,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private Station s;
 	
 	private Column[] columns;
+	private Lamp[] lamps;
 	private Spotlight sl;
 	private Spotlight s2;
 
@@ -146,8 +148,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 			//Column.draw(gl, 0, 0, 7 * (float) i, tid_grass, texturesOn);
 		}
 
-		//for (int i = -2; i <= 3; i++)
-		//	drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
+		for (int i = -2; i <= 3; i++)
+		{
+			//	drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
+			lamps[i+2].Draw(gl, cull, 0);
+		}
+		
 
 		sl.Draw(gl, cull, 0);
 		s2.Draw(gl, cull, 0);
@@ -318,6 +324,17 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//4.5f, 0, 0, -90);
 		s2.SetPos(3f, 0, 0);
 		s2.SetAngles(0, -135, 0);
+		
+		
+		GLModel lampmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/lamp.obj", "./models/lamp.mtl", gl);
+		lamps = new Lamp[6];
+		for (int i = -2; i <= 3; i++)
+		{
+			lamps[i+2] = new Lamp(texturesOn);
+			lamps[i+2].SetPos(2.35f * (float) i - 2.35f / 2.0f, 0, 0);
+			//drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
+			lamps[i+2].SetModel(lampmodel);
+		}
 		
 	}
 
