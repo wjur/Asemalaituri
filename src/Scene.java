@@ -73,8 +73,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glPushMatrix();
 		gl.glScalef(1, 1, -1);
 		gl.glTranslatef(0, 0, -8);
+		gl.glEnable(GL2.GL_CLIP_PLANE0);
+		gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[]{0.0,0.0,-1,4}, 0);
 		drawAll(gl, GL2.GL_CW);
-		
+		gl.glDisable(GL2.GL_CLIP_PLANE0);
 		gl.glPopMatrix();
 		
 		
