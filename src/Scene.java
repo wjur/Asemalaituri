@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import com.jogamp.opengl.util.FPSAnimator;
 
 import drawables.*;
+import drawables.modeled.GLModel;
+import drawables.modeled.Spotlight;
 
 @SuppressWarnings("serial")
 public class Scene extends GLJPanel implements GLEventListener {
@@ -21,8 +23,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 	public Camera camera;
 	public Fog fog;
 
-	private GLModel spotModel = null;
-	private GLModel lampModel = null;
+	//private GLModel spotModel = null;
+	//private GLModel lampModel = null;
 
 	private Random random;
 	
@@ -42,6 +44,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private Station s;
 	
 	private Column[] columns;
+	private Spotlight sl;
+	private Spotlight s2;
 
 	public Scene() {
 		setFocusable(true);
@@ -73,6 +77,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 		//System.out.println("*");
 		camera.Update(delta);
+		Drawable.lapsedTime = lapsed;
 		
 		gl.glColorMask(true,true,true,true);
 		gl.glPushMatrix();
@@ -141,13 +146,16 @@ public class Scene extends GLJPanel implements GLEventListener {
 			//Column.draw(gl, 0, 0, 7 * (float) i, tid_grass, texturesOn);
 		}
 
-		for (int i = -2; i <= 3; i++)
-			drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
+		//for (int i = -2; i <= 3; i++)
+		//	drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
 
-		drawSpotA(gl, 4.5f, 0, 0, -90);
-		drawSpotB(gl, 3, 0, 0, -135);
+		sl.Draw(gl, cull, 0);
+		s2.Draw(gl, cull, 0);
+		//drawSpotA(gl, 4.5f, 0, 0, -90);
+		//drawSpotB(gl, 3, 0, 0, -135);
 	}
 
+	/*
 	private void drawSpotA(GL2 gl, float x, float y, float z, float angle) {
 		float f1 = Math
 				.abs((float) (Math.cos(lapsed * 0.00001f / (10 * 3.14))));
@@ -159,19 +167,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		float[] lightPos = { 0, 0.0235f, 0.01f, SHINE_ALL_DIRECTIONS };
 		float[] lightDir = { 0, 0, 1, SHINE_ALL_DIRECTIONS };
 
-		/*
-		 * //debug :) gl.glBegin(GL2.GL_QUADS); gl.glColor3f(1, 0, 0);
-		 * gl.glNormal3f(0, 0, -1); gl.glVertex3f(-0.01f, 0.0335f, 0.01f);
-		 * 
-		 * gl.glColor3f(1, 0, 0); gl.glNormal3f(0, 0, -1); gl.glVertex3f(0.01f,
-		 * 0.0335f, 0.01f);
-		 * 
-		 * gl.glColor3f(1, 0, 0); gl.glNormal3f(0, 0, -1); gl.glVertex3f(0.01f,
-		 * 0.0135f, 0.01f);
-		 * 
-		 * gl.glColor3f(1, 0, 0); gl.glNormal3f(0, 0, -1); gl.glVertex3f(-0.01f,
-		 * 0.0135f, 0.01f); gl.glEnd();
-		 */
+		
 
 		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
 		float[] lightColorSpecular = { 1f, 0.5f, 1f, 0.3f };
@@ -221,14 +217,15 @@ public class Scene extends GLJPanel implements GLEventListener {
 		drawSpot(gl, x, y, z, angle);
 
 		gl.glPopMatrix();
-	}
+	}*/
 
-	private void drawSpot(GL2 gl, float x, float y, float z, float angle) {
+	/*private void drawSpot(GL2 gl, float x, float y, float z, float angle) {
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 		spotModel.opengldraw(gl);// .draw(gl);
 
-	}
+	}*/
 
+	/*
 	private void drawLamp(GL2 gl, float x, float y, float z) {
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 		gl.glPushMatrix();
@@ -238,7 +235,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glUniform1i(texturesOn,0);
 		lampModel.opengldraw(gl);
 		gl.glPopMatrix();
-	}
+	}*/
 
 	@Override
 	public void dispose(GLAutoDrawable arg0) {
@@ -306,6 +303,22 @@ public class Scene extends GLJPanel implements GLEventListener {
 			columns[i+2] = new Column(sampler0, texturesOn, tid_grass);
 			((Drawable)columns[i+2]).SetPos(0, 0,  7 * (float) i);
 		}
+		
+		GLModel spotlightmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/spot.obj", "./models/spot.mtl", gl);
+		sl = new Spotlight(texturesOn, GL2.GL_LIGHT2);
+		sl.SetModel(spotlightmodel);
+		//4.5f, 0, 0, -90);
+		sl.SetPos(4.5f, 0, 0);
+		sl.SetAngles(0, -90, 0);
+		
+		
+		//gl, 3, 0, 0, -135
+		s2 = new Spotlight(texturesOn, GL2.GL_LIGHT3);
+		s2.SetModel(spotlightmodel);
+		//4.5f, 0, 0, -90);
+		s2.SetPos(3f, 0, 0);
+		s2.SetAngles(0, -135, 0);
+		
 	}
 
 	
@@ -405,13 +418,15 @@ public class Scene extends GLJPanel implements GLEventListener {
 	}
 
 	private Boolean loadModels(GL2 gl) {
-		spotModel = ModelLoaderOBJ.LoadModel("./models/spot.obj",
-				"./models/spot.mtl", gl);
-		lampModel = ModelLoaderOBJ.LoadModel("./models/lamp.obj",
-				"./models/lamp.mtl", gl);
-		if (spotModel == null || lampModel == null) {
-			return false;
-		}
+		//spotModel = ModelLoaderOBJ.LoadModel("./models/spot.obj",
+		//		"./models/spot.mtl", gl);
+		
+		
+		//lampModel = ModelLoaderOBJ.LoadModel("./models/lamp.obj",
+		//		"./models/lamp.mtl", gl);
+		//if (spotModel == null || lampModel == null) {
+		//	return false;
+		//}
 		return true;
 	}
 

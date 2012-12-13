@@ -14,6 +14,8 @@ public abstract class Drawable {
 	protected float x,y,z;
 	//angles
 	protected float ax, ay, az;
+	
+	public static long lapsedTime;
 
 	public Drawable(int sampler0, int sampler1, int texturesOn, int texture0, int texture1)
 	{
@@ -24,6 +26,8 @@ public abstract class Drawable {
 		this.texture1 = texture1;
 		x=y=z=ax=ay=az=0;
 	}
+	
+	
 	
 	public void SetPos(float x, float y, float z)
 	{
