@@ -7,7 +7,13 @@ import javax.media.opengl.GL2;
 import com.jogamp.common.nio.Buffers;
 
 
-public class Column {
+public class Column extends Drawable {
+	public Column(int sampler0, int sampler1, int texturesOn, int texture0,
+			int texture1) {
+		super(sampler0, sampler1, texturesOn, texture0, texture1);
+		// TODO Auto-generated constructor stub
+	}
+
 	private static float vertices1[] = { 1, 1, 1, -1, 1, 1, -1, -1, 1, // v0-v1-v2 (front)
 			-1, -1, 1, 1, -1, 1, 1, 1, 1, // v2-v3-v0
 

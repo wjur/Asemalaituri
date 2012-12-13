@@ -39,6 +39,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private int sampler1;
 	public int selected_tid_m;
 	private int fogOn;
+	private Station s;
 
 	public Scene() {
 		setFocusable(true);
@@ -127,8 +128,11 @@ public class Scene extends GLJPanel implements GLEventListener {
 	private void drawAll(GL2 gl, int cull) {
 		gl.glFrontFace(cull);
 		setGlobalLight(gl);
-		Station.drawExterior(gl, texturesOn);
-		Station.drawInterior(gl, tid_peron, selected_tid_m == 0 ? tid_m : tid_m2, texturesOn, sampler0, sampler1);
+		//s.DrawModels(gl, cull);
+		s.setTexture0(selected_tid_m == 0 ? tid_m : tid_m2);
+		s.Draw(gl, cull, 0);
+		//Station.drawExterior(gl, texturesOn);
+		//Station.drawInterior(gl, tid_peron, selected_tid_m == 0 ? tid_m : tid_m2, texturesOn, sampler0, sampler1);
 		for (int i = -2; i <= 2; i++)
 			Column.draw(gl, 0, 0, 7 * (float) i, tid_grass, texturesOn);
 
@@ -282,6 +286,13 @@ public class Scene extends GLJPanel implements GLEventListener {
 		System.out.print(tid_grass);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 		
+		/*
+		 * texturesOn = gl.glGetUniformLocation(shaderProgram, "texturesOn");
+        sampler0 = gl.glGetUniformLocation(shaderProgram, "color_texture0");
+        sampler1 = gl.glGetUniformLocation(shaderProgram, "color_texture1");
+		 */
+		
+		s = new Station(sampler0, sampler1, texturesOn, tid_m, tid_peron);
 		//gl.glB
 	}
 

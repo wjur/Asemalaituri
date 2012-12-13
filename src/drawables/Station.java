@@ -2,58 +2,40 @@ package drawables;
 
 import javax.media.opengl.GL2;
 
-public class Station {
+public class Station extends Drawable {
 
-	public static void drawFace(GL2 gl) {
+
+	public Station(int sampler0, int sampler1, int texturesOn, int texture1, int texture2)
+	{
+		super(sampler0, sampler1, texturesOn, texture1, texture2);
+	}
+	
+	private void drawFace(GL2 gl) {
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		
-		
 		gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 0, 32);
 		gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 0, 80);
-		//gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 0, 80);
-		//gl.glTexCoord2f(0,80);
-		
 		gl.glVertex3f(-1, 1, 0);
-		
-
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		
-		
-		
 		gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 4, 32);
 		gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 1, 80);
-		//gl.glTexCoord2f(1,80);
-		
 		gl.glVertex3f(1, 1, 0);
-		
-
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		
-		
 		gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 4, 0);
 		gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 1, 0);
-		//gl.glTexCoord2f(1,0);
-		
-		
 		gl.glVertex3f(1, 0, 0);
-
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		
-		
 		gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 0, 0);
 		gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 0, 0);
-		//gl.glTexCoord2f(0,0);
-		
 		gl.glVertex3f(-1, 0, 0);
 		gl.glEnd();
 	}
 
-	public static void drawExterior(GL2 gl, int texturesOn) {
+	private void drawExterior(GL2 gl, int texturesOn) {
 		gl.glUniform1i(texturesOn,0);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 		
@@ -120,7 +102,7 @@ public class Station {
 		gl.glPopMatrix();
 	}
 
-	public static void drawInterior(GL2 gl, int tid_peron, int tid_m, int texturesOn, int sampler0, int sampler1) {
+	public void drawInterior(GL2 gl, int cull){ // int tid_peron, int tid_m, int texturesOn, int sampler0, int sampler1) {
 		
 		float[] rgba = { 0.16f, 0.16f, 0.14f };
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
@@ -137,7 +119,7 @@ public class Station {
 		 //Assign the first texture to GL_TEXTURE1_ARB
 	     gl.glActiveTexture(GL2.GL_TEXTURE0);
 	     //gl.glEnable(GL2.GL_TEXTURE_2D);
-	     gl.glBindTexture(GL2.GL_TEXTURE_2D, tid_m);
+	     gl.glBindTexture(GL2.GL_TEXTURE_2D, super.texture0);
 	     //gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_OBJECT_LINEAR);
 	     //gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_OBJECT_LINEAR);
 	     //gl.glEnable(GL2.GL_TEXTURE_GEN_S);
@@ -146,10 +128,10 @@ public class Station {
 	    //Assign the first texture to GL_TEXTURE1_ARB
 	    gl.glActiveTexture(GL2.GL_TEXTURE1);
 	    //gl.glEnable(GL2.GL_TEXTURE_2D);
-	    gl.glBindTexture(GL2.GL_TEXTURE_2D, tid_peron);
+	    gl.glBindTexture(GL2.GL_TEXTURE_2D, super.texture1);
 		
-	    gl.glUniform1i(sampler0,0);
-	    gl.glUniform1i(sampler1,1);
+	    gl.glUniform1i(super.sampler0,0);
+	    gl.glUniform1i(super.sampler1,1);
 		
 	     
 		gl.glPushMatrix();
@@ -183,5 +165,12 @@ public class Station {
 		gl.glRotatef(90, 0, 1, 0);
 		drawFace(gl);
 		gl.glPopMatrix();
+	}
+
+	@Override
+	public void DrawModels(GL2 gl, int cull) {
+		// TODO Auto-generated method stub
+		this.drawInterior(gl, cull);
+		this.drawExterior(gl, cull);
 	}
 }
