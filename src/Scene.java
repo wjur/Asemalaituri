@@ -35,17 +35,17 @@ public class Scene extends GLJPanel implements GLEventListener {
 	public Fog fog;
 	private Random random;
 	
-	public int tid_grass;
+	//public int tid_grass;
 
 	long startTime, lastTime;
 	long lapsed, delta;
-	private int tid_m;
-	private int tid_m2;
-	private int tid_peron;
+	//private int tid_m;
+	//private int tid_m2;
+	//private int tid_peron;
 	public int texturesOn;
 	private int sampler0;
 	private int sampler1;
-	public int selected_tid_m;
+	//public int selected_tid_m;
 	private int fogOn;
 	private Station s;
 	
@@ -115,7 +115,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glFrontFace(cull);
 		setGlobalLight(gl, nextint);
 		//s.DrawModels(gl, cull);
-		s.setTexture0(selected_tid_m == 0 ? tid_m : tid_m2);
+		//s.setTexture0(selected_tid_m == 0 ? tid_m : tid_m2);
 		for (int i = 0; i < sceneObjects.size(); i++) {
 			((Drawable)sceneObjects.get(i)).Draw(gl, cull, 1);
 		}
@@ -223,11 +223,11 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glEnable(GL2.GL_TEXTURE_2D);
 
 
-		tid_grass = TextureLoader.setupTextures("./gfx/liscie.png", gl);
-		tid_m = TextureLoader.setupTextures("./gfx/m.png", gl);
-		tid_m2 = TextureLoader.setupTextures("./gfx/m2.png", gl);
-		tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
-		selected_tid_m = 0;
+		//tid_grass = TextureLoader.setupTextures("./gfx/liscie.png", gl);
+		//tid_m = TextureLoader.setupTextures("./gfx/m.png", gl);
+		//tid_m2 = TextureLoader.setupTextures("./gfx/m2.png", gl);
+		//tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
+		//selected_tid_m = 0;
 		
 
 
@@ -237,14 +237,14 @@ public class Scene extends GLJPanel implements GLEventListener {
 	}
 
 	private void createObjects(GL2 gl) {
-		s = new Station(sampler0, sampler1, texturesOn, tid_m, tid_peron);
+		s = new Station(sampler0, sampler1, texturesOn, 0, 0);
 		sceneObjects.add(s);
 		
 		columns = new Column[5];
 		
 		for (int i = -2; i <= 2; i++)
 		{
-			columns[i+2] = new Column(sampler0, texturesOn, tid_grass);
+			columns[i+2] = new Column(sampler0, texturesOn, 0);
 			((Drawable)columns[i+2]).SetPos(0, 0,  7 * (float) i);
 			sceneObjects.add(columns[i+2]);
 		}
