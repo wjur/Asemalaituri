@@ -93,14 +93,9 @@ public class Column extends Drawable {
 	static FloatBuffer tex_buffer = Buffers.newDirectFloatBuffer(tex1);
 	
 	public void draw(GL2 gl, int cull) { //float x, float y, float z, int tid, int texturesOn) {
-		gl.glUniform1i(super.texturesOn,1);
-		gl.glBindTexture(GL2.GL_TEXTURE_2D, super.texture0);
-		float[] rgba = { 0.1f, 0.1f, 0.1f };
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, rgba, 0);
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE,
-				new float[] { 0.8f, 0.8f, 0.8f }, 0);
-		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, new float[] { 0.1f, 0.1f, 0.1f }, 0);
-		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 0.5f);
+		//gl.glUniform1i(super.texturesOn,1);
+		//gl.glBindTexture(GL2.GL_TEXTURE_2D, super.texture0);
+		
 			
 		gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
 		gl.glEnableClientState (GL2.GL_TEXTURE_COORD_ARRAY); 

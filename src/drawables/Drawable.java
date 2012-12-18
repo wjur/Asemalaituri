@@ -14,6 +14,10 @@ public abstract class Drawable {
 	protected float x,y,z;
 	//angles
 	protected float ax, ay, az;
+	private float[] ambient_color;
+	private float[] diffuse_color;
+	private float[] specular_color;
+	private float shininess;
 	
 	public static long lapsedTime;
 
@@ -25,6 +29,10 @@ public abstract class Drawable {
 		this.setTexture0(texture0);
 		this.texture1 = texture1;
 		x=y=z=ax=ay=az=0;
+		ambient_color = new float[] {0,0,0};
+		diffuse_color = new float[] {0,0,0};
+		specular_color = new float[] {0,0,0};
+		shininess = 1;
 	}
 	
 	
@@ -66,12 +74,14 @@ public abstract class Drawable {
 	{
 		gl.glPushMatrix();
 		PreDraw(gl);
+		
 		if (onlyLight == 1)
 		{
 			SetLight(gl);
 		}
 		else
 		{
+			setMaterials(gl);
 			DrawModels(gl, cull);
 		}
 		PostDraw(gl);
@@ -83,6 +93,22 @@ public abstract class Drawable {
 	}
 
 	public void SetLight(GL2 gl) {
+	}
+	
+	protected void setMaterials(GL2 gl)
+	{
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, ambient_color, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, diffuse_color, 0);
+		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, specular_color, 0);
+		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, shininess);
+	}
+	
+	public void SetColorsShininess(float a[], float d[], float s[], float frac)
+	{
+		this.ambient_color = a;
+		this.diffuse_color = d;
+		this.specular_color = s;
+		this.shininess = frac;
 	}
 	
 }

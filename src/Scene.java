@@ -57,10 +57,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	
 	Vector<Drawable> sceneObjects;
-	private Texture cubemaptexture;
 
 	private int shaderProgram;
-	private float[] potpos = new float[]{2,3,0};
 
 	public Scene() {
 		setFocusable(true);
@@ -82,7 +80,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 	public void display(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glLoadIdentity();
-		fog.Apply();
+		//fog.Apply();
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT );
 
 		int nextint = random.nextInt();
@@ -156,68 +154,8 @@ public class Scene extends GLJPanel implements GLEventListener {
 		loadTextures(gl);
 		createObjects(gl);
 		
-		cubemaptexture = loadCubemap(gl);
-		
 	}
 	
-	public static Texture loadCubemap(GL2 gl) {
-		Texture cubemap = TextureIO.newTexture(GL2.GL_TEXTURE_CUBE_MAP);
-		int[] targets = { GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-				GL2.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-				GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-				GL2.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-				GL2.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-				GL2.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
-		for (int i = 0; i < 6; i++) {
-
-			TextureData data;
-			try {
-				data = TextureIO.newTextureData(GLProfile.getDefault(), Thread
-						.currentThread().getContextClassLoader()
-						.getResourceAsStream("./liscie.png"), false, "png");
-				cubemap.updateImage(gl, data, targets[i]);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return cubemap;
-	}
-	
-	protected void drawMapped(GL2 gl) {
-		gl.glUseProgram(0);
-		
-		cubemaptexture.bind(gl);
-		gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
-		gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
-		gl.glTexGeni(GL2.GL_R, GL2.GL_TEXTURE_GEN_MODE, GL2.GL_REFLECTION_MAP);
-		gl.glPushMatrix();
-		gl.glColor3d(1, 1, 1);
-		
-		gl.glTranslated(potpos[0], potpos[1], potpos[2]);
-		
-		gl.glEnable(GL2.GL_TEXTURE_CUBE_MAP);
-		gl.glEnable(GL2.GL_TEXTURE_GEN_S);
-		gl.glEnable(GL2.GL_TEXTURE_GEN_T);
-		gl.glEnable(GL2.GL_TEXTURE_GEN_R);
-
-		GLUT glut = new GLUT();
-		
-		gl.glFrontFace(GL2.GL_CCW);
-		
-		//glut.glutSolidTeapot(0.3);
-		glut.glutSolidSphere(0.3, 20, 20);
-		//glut.glutSolidCube(1f);
-		
-		gl.glPopMatrix();
-
-		gl.glDisable(GL2.GL_TEXTURE_GEN_S);
-		gl.glDisable(GL2.GL_TEXTURE_GEN_T);
-		gl.glDisable(GL2.GL_TEXTURE_GEN_R);
-
-		gl.glDisable(GL2.GL_TEXTURE_CUBE_MAP);
-
-		gl.glUseProgram(shaderProgram);
-	}
 	
 	private void loadTextures(GL2 gl) {
 		gl.glEnable(GL2.GL_TEXTURE_2D);
@@ -238,6 +176,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	private void createObjects(GL2 gl) {
 		s = new Station(sampler0, sampler1, texturesOn, 0, 0);
+		s.SetColorsShininess(new float[]{0.2f, 0.2f,0.2f }, new float[]{0.8f, 0.8f,0.0f } , new float[]{0.2f, 0.2f,0 }, 2);
 		sceneObjects.add(s);
 		
 		columns = new Column[5];
@@ -247,6 +186,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 			columns[i+2] = new Column(sampler0, texturesOn, 0);
 			((Drawable)columns[i+2]).SetPos(0, 0,  7 * (float) i);
 			sceneObjects.add(columns[i+2]);
+			columns[i+2].SetColorsShininess(new float[]{0.2f, 0,0 }, new float[]{1f, 0.2f,0.2f } , new float[]{0.9f, 0,0 }, 30);
 		}
 		
 		GLModel spotlightmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/spot.obj", "./models/spot.mtl", gl);
@@ -257,6 +197,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//4.5f, 0, 0, -90);
 		s2.SetPos(3f, 0, 0);
 		s2.SetAngles(0, -135, 0);
+		s2.SetColorsShininess(new float[]{0.2f, 0.2f,0.2f }, new float[]{0.8f, 0.8f,0.8f } , new float[]{0.2f, 0,0.2f }, 1);
 		
 		sceneObjects.add(s2);
 		
@@ -265,6 +206,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//4.5f, 0, 0, -90);
 		sl.SetPos(4.5f, 0, 0);
 		sl.SetAngles(0, -90, 0);
+		sl.SetColorsShininess(new float[]{0.2f, 0.2f,0.2f }, new float[]{0.8f, 0.8f,0.8f } , new float[]{0.2f, 0,0.2f }, 1);
 		
 		sceneObjects.add(sl);
 		
@@ -278,6 +220,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 			//drawLamp(gl, 2.35f * (float) i - 2.35f / 2.0f, 0, 0);
 			lamps[i+2].SetModel(lampmodel);
 			sceneObjects.add(lamps[i+2]);
+			lamps[i+2].SetColorsShininess(new float[]{0.2f, 0.2f,0.2f }, new float[]{0.7f, 0.7f,0.7f } , new float[]{0.9f, 0.9f,0.9f }, 10);
 		}
 		
 		
