@@ -1,7 +1,6 @@
 varying vec3 normal, eyeVec, ld[4];
 varying float att[4];
-uniform sampler2D color_texture0;
-uniform sampler2D color_texture1;
+uniform sampler2D sampler[6];
 
 uniform int texturesOn;
 uniform int fogOn;
