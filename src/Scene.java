@@ -98,6 +98,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 		lapsed = now - startTime;
 		lapsed /= 1000; // Can I haz milisecondz? 
 		delta /= 1000;
+		
+		gl.glActiveTexture(GL2.GL_TEXTURE0);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, lvl[0].getTextureObject(gl));
+		gl.glActiveTexture(GL2.GL_TEXTURE1);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, lvl[1].getTextureObject(gl));
+		
 		gl.glUniform1iv(sampler, 6, textures_ids, 0);
 		camera.Update(delta);
 		Drawable.lapsedTime = lapsed;

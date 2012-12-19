@@ -22,8 +22,8 @@ public class Spotlight extends ModeledDrawable{
 	
 	@Override
 	public void DrawModels(GL2 gl, int cull) {
-		gl.glUniform1i(texturesOn,0);
-		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+		//gl.glUniform1i(texturesOn,0);
+		//gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 		super.DrawModel(gl);
 	}
 }
