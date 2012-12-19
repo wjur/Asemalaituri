@@ -51,6 +51,27 @@ void main (void)
 						   specular * att[i]* spot;	
 		}
 	}
-	gl_FragColor = final_color;
+	float intens = final_color.r*0.3 + final_color*0.59 + final_color * 0.11;//30 Red + 59 Green + 11 Blue
+	intens *= 5;
 	
+	int i = 1;
+	
+	float colors[7];
+	colors[0]=0;
+	colors[1]=texture2D(sampler[0],gl_TexCoord[0].st);
+	colors[2]=texture2D(sampler[1],gl_TexCoord[0].st);
+	colors[3]=texture2D(sampler[2],gl_TexCoord[0].st);
+	colors[4]=texture2D(sampler[3],gl_TexCoord[0].st);
+	colors[5]=texture2D(sampler[4],gl_TexCoord[0].st);
+	colors[6]=texture2D(sampler[5],gl_TexCoord[0].st);
+		
+	float lower = (int)floor(intens);
+	float higher = (int)ceil(intens);
+	
+	int ilow = lower;
+	int ihi = higher;
+	
+	
+	gl_FragColor = vec4(higher/5.0f, higher/5.0f, higher/5.0f, 1) * colors[5];
+	gl_FragColor = texture2D(sampler[0],gl_TexCoord[0].st);
 }

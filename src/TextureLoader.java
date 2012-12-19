@@ -10,7 +10,7 @@ import de.matthiasmann.twl.utils.PNGDecoder;
 
 
 public class TextureLoader {
-	public static int setupTextures(String filename, GL2 gl) {
+	public static int setupTextures(String filename, GL2 gl, PNGDecoder.Format format) {
 		IntBuffer intBuffer = IntBuffer.allocate(1);
 	    gl.glGenTextures(1, intBuffer);
 	    intBuffer.rewind();
@@ -24,7 +24,7 @@ public class TextureLoader {
 	        System.out.println("height=" + decoder.getHeight());
 
 	        ByteBuffer buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
-	        decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
+	        decoder.decode(buf, decoder.getWidth() * 4, format);
 	        buf.flip();
 
 	        gl.glBindTexture(GL2.GL_TEXTURE_2D, intBuffer.get(0));

@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.Random;
 import java.util.Vector;
 
@@ -70,17 +71,15 @@ public class Scene extends GLJPanel implements GLEventListener {
 		random = new Random();
 		lastTime = startTime = System.nanoTime();
 		sceneObjects = new Vector<Drawable>();
+		lvl = new Texture[6];
 	}
 	
 	
 	public int fakeH = 64;
 	public int fakeW = fakeH*2;
-	private int lvl_1;
-	private int lvl_2;
-	private int lvl_3;
-	private int lvl_4;
-	private int lvl_5;
-	private int lvl_6;
+	
+	private Texture[] lvl;
+	private int sampler;
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
@@ -173,19 +172,50 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
 		//selected_tid_m = 0;
 		
-	/*	lvl_1 =  TextureLoader.setupTextures("./gfx/l1.png", gl);
+		
+		for (int i = 0; i < 6; i++) {
+			TextureData texData;
+			try {
+				String fname = "./l"+ Integer.toString(i+1) +".png";
+			
+				texData = TextureIO.newTextureData(GLProfile.getDefault(),
+						Thread.currentThread().getContextClassLoader()
+								.getResourceAsStream(fname), false,
+						"png");
+				lvl[i] = TextureIO.newTexture(texData);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+
+        IntBuffer ib = IntBuffer.allocate(6);
+        
+        for (int i = 0; i < lvl.length; i++) {
+			ib.put(lvl[i].getTarget());
+		}
+        
+        
+        gl.glUniform1iv(sampler, 6, ib.array(), 0);
+        //gl.glUniform1i(texturesOn,0);
+		
+		
+		/*
+		lvl_1 =  TextureLoader.setupTextures("./gfx/l1.png", gl);
 		lvl_2 =  TextureLoader.setupTextures("./gfx/l2.png", gl);
 		lvl_3 =  TextureLoader.setupTextures("./gfx/l3.png", gl);
 		lvl_4 =  TextureLoader.setupTextures("./gfx/l4.png", gl);
 		lvl_5 =  TextureLoader.setupTextures("./gfx/l5.png", gl);
-		lvl_6 =  TextureLoader.setupTextures("./gfx/l6.png", gl);
-*/
+		lvl_6 =  TextureLoader.setupTextures("./gfx/l6.png", gl);*/
+
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 	}
 
 	private void createObjects(GL2 gl) {
 		s = new Station(sampler0, sampler1, texturesOn, 0, 0);
-		s.SetColorsShininess(new float[]{0.2f, 0.2f,0.2f }, new float[]{0.8f, 0.8f,0.0f } , new float[]{0.2f, 0.2f,0 }, 2);
+		s.SetColorsShininess(new float[]{0.3f, 0.3f,0.3f }, new float[]{0.8f, 0.8f,0.0f } , new float[]{0.2f, 0.2f,0 }, 2);
 		sceneObjects.add(s);
 		
 		columns = new Column[5];
@@ -206,7 +236,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//4.5f, 0, 0, -90);
 		s2.SetPos(3f, 0, 0);
 		s2.SetAngles(0, -135, 0);
-		s2.SetColorsShininess(new float[]{0.2f, 0.2f,0.2f }, new float[]{0.8f, 0.8f,0.8f } , new float[]{0.2f, 0,0.2f }, 1);
+		s2.SetColorsShininess(new float[]{0.3f, 0.3f,0.3f }, new float[]{0.8f, 0.8f,0.8f } , new float[]{0.2f, 0,0.2f }, 1);
 		
 		sceneObjects.add(s2);
 		
@@ -323,7 +353,9 @@ public class Scene extends GLJPanel implements GLEventListener {
         sampler0 = gl.glGetUniformLocation(shaderProgram, "color_texture0");
         sampler1 = gl.glGetUniformLocation(shaderProgram, "color_texture1");
         fogOn = gl.glGetUniformLocation(shaderProgram, "fogOn");
-        //gl.glUniform1i(texturesOn,0);
+        
+        sampler = gl.glGetUniformLocation(shaderProgram, "sampler");
+        
         
         fog = new Fog(fogOn, gl);
         
