@@ -56,22 +56,24 @@ void main (void)
 	
 	int i = 1;
 	
-	float colors[7];
-	colors[0]=0;
-	colors[1]=texture2D(sampler[0],gl_TexCoord[0].st);
-	colors[2]=texture2D(sampler[1],gl_TexCoord[0].st);
-	colors[3]=texture2D(sampler[2],gl_TexCoord[0].st);
-	colors[4]=texture2D(sampler[3],gl_TexCoord[0].st);
-	colors[5]=texture2D(sampler[4],gl_TexCoord[0].st);
-	colors[6]=texture2D(sampler[5],gl_TexCoord[0].st);
+	float colors[6];
+	colors[0]=texture2D(sampler[0],gl_TexCoord[0].st);
+	colors[1]=texture2D(sampler[1],gl_TexCoord[0].st);
+	colors[2]=texture2D(sampler[2],gl_TexCoord[0].st);
+	colors[3]=texture2D(sampler[3],gl_TexCoord[0].st);
+	colors[4]=texture2D(sampler[4],gl_TexCoord[0].st);
+	colors[5]=texture2D(sampler[5],gl_TexCoord[0].st);
 		
-	float lower = (int)floor(intens);
-	float higher = (int)ceil(intens);
+	float lower = floor(intens);
+	float higher = ceil(intens);
 	
-	int ilow = lower;
-	int ihi = higher;
+	int ilow = max(lower, 0);
+	int ihi = min((int)higher, 5);
 	
+	gl_FragColor = mix(colors[5-ilow], colors[5-ihi], intens/5.0f);
+	gl_FragColor =  (vec4(1,1,1,1) - ((vec4(1,1,1,1) - gl_FragColor) * (vec4(1,1,1,1) -gl_FrontMaterial.ambient)));
+	//gl_FragColor = vec4(higher/5.0f, higher/5.0f, higher/5.0f, 1) * colors[2];
+	//gl_FragColor = texture2D(sampler[0],gl_TexCoord[0].st);
+	//gl_FragColor = vec4(intens/5.0f,intens/5.0f,intens/5.0f, 1);
 	
-	gl_FragColor = vec4(higher/5.0f, higher/5.0f, higher/5.0f, 1) * colors[5];
-	gl_FragColor = texture2D(sampler[0],gl_TexCoord[0].st);
 }

@@ -14,24 +14,23 @@ public class Station extends Drawable {
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 0, 32);
-		gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 0, 80);
-		gl.glVertex3f(-1, 1, 0);
+		gl.glTexCoord2f(0, 1);
+		gl.glVertex3f(-1, 1, 0); ///
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 4, 32);
-		gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 1, 80);
-		gl.glVertex3f(1, 1, 0);
+
+		gl.glTexCoord2f(1, 1);
+		gl.glVertex3f(1, 1, 0); ///
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 4, 0);
-		gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 1, 0);
-		gl.glVertex3f(1, 0, 0);
+
+		gl.glTexCoord2f(1, 0);
+		gl.glVertex3f(1, 0, 0); ///
 		gl.glColor3f(1, 0, 0);
 		gl.glNormal3f(0, 0, -1);
-		gl.glMultiTexCoord2f(GL2.GL_TEXTURE0, 0, 0);
-		gl.glMultiTexCoord2f(GL2.GL_TEXTURE1, 0, 0);
-		gl.glVertex3f(-1, 0, 0);
+
+		gl.glTexCoord2f(0, 0);
+		gl.glVertex3f(-1, 0, 0); ///
 		gl.glEnd();
 	}
 

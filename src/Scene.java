@@ -103,6 +103,14 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, lvl[0].getTextureObject(gl));
 		gl.glActiveTexture(GL2.GL_TEXTURE1);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, lvl[1].getTextureObject(gl));
+		gl.glActiveTexture(GL2.GL_TEXTURE2);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, lvl[2].getTextureObject(gl));
+		gl.glActiveTexture(GL2.GL_TEXTURE3);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, lvl[3].getTextureObject(gl));
+		gl.glActiveTexture(GL2.GL_TEXTURE4);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, lvl[4].getTextureObject(gl));
+		gl.glActiveTexture(GL2.GL_TEXTURE5);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, lvl[5].getTextureObject(gl));
 		
 		gl.glUniform1iv(sampler, 6, textures_ids, 0);
 		camera.Update(delta);
@@ -391,7 +399,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glEnable(GL2.GL_LIGHT1);
 
 		float[] lightPos2 = { 0, 5, -11f, 1 };
-		float[] lightColorAmbient2 = { 0.01f, 0.01f, 0.01f, 1f };
+		float[] lightColorAmbient2 = { 0.3f, 0.3f, 0.3f, 1f };
 		float[] lightColorDiffuse2 = { 0.9f, 0.9f, 0.9f, 1.0f };
 		float[] lightColorSpecular2 = { 0.9f,0.9f,0.9f, 1f };
 		// Set light parameters.
@@ -400,7 +408,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, lightColorSpecular2, 0);
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lightColorDiffuse2, 0);
 		gl.glLightf(GL2.GL_LIGHT0, GL2.GL_LINEAR_ATTENUATION, 0.005f);
-		gl.glLightf(GL2.GL_LIGHT0, GL2.GL_QUADRATIC_ATTENUATION, 0.02f);
+		gl.glLightf(GL2.GL_LIGHT0, GL2.GL_QUADRATIC_ATTENUATION, 0.002f);
 		gl.glEnable(GL2.GL_LIGHT0);
 	}
 
