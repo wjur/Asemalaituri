@@ -80,6 +80,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 	
 	private Texture[] lvl;
 	private int sampler;
+	private int[] textures_ids;
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
@@ -97,7 +98,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		lapsed = now - startTime;
 		lapsed /= 1000; // Can I haz milisecondz? 
 		delta /= 1000;
-		
+		gl.glUniform1iv(sampler, 6, textures_ids, 0);
 		camera.Update(delta);
 		Drawable.lapsedTime = lapsed;
 		drawAll(gl, GL2.GL_CCW, nextint);
@@ -194,11 +195,11 @@ public class Scene extends GLJPanel implements GLEventListener {
         IntBuffer ib = IntBuffer.allocate(6);
         
         for (int i = 0; i < lvl.length; i++) {
-			ib.put(lvl[i].getTarget());
+			ib.put(lvl[i].getTextureObject(gl));
 		}
         
+        textures_ids = ib.array();
         
-        gl.glUniform1iv(sampler, 6, ib.array(), 0);
         //gl.glUniform1i(texturesOn,0);
 		
 		
