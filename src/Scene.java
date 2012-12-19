@@ -173,13 +173,13 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//tid_peron = TextureLoader.setupTextures("./gfx/peron2.png", gl);
 		//selected_tid_m = 0;
 		
-		lvl_1 =  TextureLoader.setupTextures("./gfx/l1.png", gl);
+	/*	lvl_1 =  TextureLoader.setupTextures("./gfx/l1.png", gl);
 		lvl_2 =  TextureLoader.setupTextures("./gfx/l2.png", gl);
 		lvl_3 =  TextureLoader.setupTextures("./gfx/l3.png", gl);
 		lvl_4 =  TextureLoader.setupTextures("./gfx/l4.png", gl);
 		lvl_5 =  TextureLoader.setupTextures("./gfx/l5.png", gl);
 		lvl_6 =  TextureLoader.setupTextures("./gfx/l6.png", gl);
-
+*/
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
 	}
 
@@ -231,8 +231,6 @@ public class Scene extends GLJPanel implements GLEventListener {
 			sceneObjects.add(lamps[i+2]);
 			lamps[i+2].SetColorsShininess(new float[]{0.2f, 0.2f,0.2f }, new float[]{0.7f, 0.7f,0.7f } , new float[]{0.9f, 0.9f,0.9f }, 10);
 		}
-		
-		
 	}
 
 	
