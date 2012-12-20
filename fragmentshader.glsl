@@ -1,3 +1,4 @@
+#version 120
 varying vec3 normal, eyeVec, ld[4];
 varying float att[4];
 uniform sampler2D sampler[6];
@@ -10,14 +11,14 @@ const float cos_delta_angle = -0.05;
 
 void main (void)
 {
-	vec4 final_color = (gl_FrontLightModelProduct.sceneColor * gl_FrontMaterial.ambient);
+	vec4 final_color = vec4(0,0,0,1); // (gl_FrontLightModelProduct.sceneColor * gl_FrontMaterial.ambient);
 							
 	vec3 N = normalize(normal);
 	vec3 E = normalize(eyeVec);
 	
 	for (int i=0; i<4; i++)
 	{
-		final_color += (gl_LightSource[i].ambient * gl_FrontMaterial.ambient);
+		//final_color += (gl_LightSource[i].ambient * gl_FrontMaterial.ambient);
 	
 		vec3 L = normalize(ld[i]);
 		vec3 D = normalize(gl_LightSource[i].spotDirection);
@@ -51,12 +52,14 @@ void main (void)
 						   specular * att[i]* spot;	
 		}
 	}
-	float intens = final_color.r*0.3 + final_color*0.59 + final_color * 0.11;//30 Red + 59 Green + 11 Blue
-	intens *= 5;
+	float intens = final_color.r*0.3 + final_color.g*0.59 + final_color.b * 0.11;//30 Red + 59 Green + 11 Blue
+	intens = clamp(intens, 0.0, 1.0);
+	intens *= 5.0;
 	
 	int i = 1;
 	
-	float colors[6];
+	vec4 colors[6];
+	//colors[0] = vec4(1,1,1,1);
 	colors[0]=texture2D(sampler[0],gl_TexCoord[0].st);
 	colors[1]=texture2D(sampler[1],gl_TexCoord[0].st);
 	colors[2]=texture2D(sampler[2],gl_TexCoord[0].st);
@@ -64,16 +67,19 @@ void main (void)
 	colors[4]=texture2D(sampler[4],gl_TexCoord[0].st);
 	colors[5]=texture2D(sampler[5],gl_TexCoord[0].st);
 		
-	float lower = floor(intens);
-	float higher = ceil(intens);
+	float lower = max(floor(intens), 0.0);
+	float higher = min(ceil(intens), 5.0);
 	
-	int ilow = max(lower, 0);
-	int ihi = min((int)higher, 5);
+	int lower_i = int(lower);
+	int higher_i = int(higher);
 	
-	gl_FragColor = mix(colors[5-ilow], colors[5-ihi], intens/5.0f);
-	gl_FragColor =  (vec4(1,1,1,1) - ((vec4(1,1,1,1) - gl_FragColor) * (vec4(1,1,1,1) -gl_FrontMaterial.ambient)));
+	//intens = ceil(intens);
+	
+	gl_FragColor = mix(colors[5-lower_i], colors[5-higher_i], intens- float(lower_i));
+	gl_FragColor =  (vec4(1,1,1,1) - ((vec4(1,1,1,1) - gl_FragColor) * (vec4(1,1,1,1) - gl_FrontMaterial.ambient)));
+	//gl_FragColor =  (vec4(1,1,1,1) - ((vec4(1,1,1,1) - gl_FragColor) * (vec4(1,1,1,1) - gl_FrontMaterial.ambient)));
 	//gl_FragColor = vec4(higher/5.0f, higher/5.0f, higher/5.0f, 1) * colors[2];
 	//gl_FragColor = texture2D(sampler[0],gl_TexCoord[0].st);
-	//gl_FragColor = vec4(intens/5.0f,intens/5.0f,intens/5.0f, 1);
+	//gl_FragColor = vec4(intens/6.0,intens/6.0,intens/6.0, 1);
 	
 }

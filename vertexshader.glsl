@@ -1,3 +1,4 @@
+#version 120
 varying vec3 normal, eyeVec, ld[4];
 varying float att[4];
 

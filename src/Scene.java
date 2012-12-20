@@ -115,6 +115,9 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glUniform1iv(sampler, 6, textures_ids, 0);
 		camera.Update(delta);
 		Drawable.lapsedTime = lapsed;
+		gl.glPolygonMode( GL2.GL_FRONT_AND_BACK, GL2.GL_LINE );
+		drawAll(gl, GL2.GL_CCW, nextint);
+		gl.glPolygonMode( GL2.GL_FRONT_AND_BACK, GL2.GL_FILL  );
 		drawAll(gl, GL2.GL_CCW, nextint);
 		//renderWithMirror(gl, false, nextint);
 		
@@ -161,6 +164,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glLoadIdentity();
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
+		
 		
 		gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE);
 		gl.glLoadIdentity();
@@ -230,7 +234,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	private void createObjects(GL2 gl) {
 		s = new Station(sampler0, sampler1, texturesOn, 0, 0);
-		s.SetColorsShininess(new float[]{0.3f, 0.3f,0.3f }, new float[]{0.8f, 0.8f,0.0f } , new float[]{0.2f, 0.2f,0 }, 2);
+		s.SetColorsShininess(new float[]{0.2f, 0.2f,0.8f }, new float[]{0.9f, 0.9f,0.9f} , new float[]{0.2f, 0.2f,0.2f }, 2);
 		sceneObjects.add(s);
 		
 		columns = new Column[5];
@@ -240,7 +244,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 			columns[i+2] = new Column(sampler0, texturesOn, 0);
 			((Drawable)columns[i+2]).SetPos(0, 0,  7 * (float) i);
 			sceneObjects.add(columns[i+2]);
-			columns[i+2].SetColorsShininess(new float[]{0.2f, 0,0 }, new float[]{1f, 0.2f,0.2f } , new float[]{0.9f, 0,0 }, 30);
+			columns[i+2].SetColorsShininess(new float[]{0.2f, 0,0 }, new float[]{0.9f, 0.9f,0.9f} , new float[]{0.9f, 0,0 }, 30);
 		}
 		
 		GLModel spotlightmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/spot.obj", "./models/spot.mtl", gl);
@@ -251,7 +255,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//4.5f, 0, 0, -90);
 		s2.SetPos(3f, 0, 0);
 		s2.SetAngles(0, -135, 0);
-		s2.SetColorsShininess(new float[]{0.3f, 0.3f,0.3f }, new float[]{0.8f, 0.8f,0.8f } , new float[]{0.2f, 0,0.2f }, 1);
+		s2.SetColorsShininess(new float[]{0.1f, 0.9f,0.1f }, new float[]{0.8f, 0.8f,0.8f } , new float[]{0.2f, 0,0.2f }, 1);
 		
 		sceneObjects.add(s2);
 		
@@ -260,12 +264,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 		//4.5f, 0, 0, -90);
 		sl.SetPos(4.5f, 0, 0);
 		sl.SetAngles(0, -90, 0);
-		sl.SetColorsShininess(new float[]{0.2f, 0.2f,0.2f }, new float[]{0.8f, 0.8f,0.8f } , new float[]{0.2f, 0,0.2f }, 1);
+		sl.SetColorsShininess(new float[]{0.7f, 0.6f,0.1f }, new float[]{0.8f, 0.8f,0.8f } , new float[]{0.2f, 0,0.2f }, 1);
 		
 		sceneObjects.add(sl);
 		
 		
-		GLModel lampmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/lamp.obj", "./models/lamp.mtl", gl);
+		/*GLModel lampmodel = drawables.modeled.ModelLoaderOBJ.LoadModel("./models/lamp.obj", "./models/lamp.mtl", gl);
 		lamps = new Lamp[6];
 		for (int i = 3; i >= -2; i--)
 		{
@@ -275,7 +279,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 			lamps[i+2].SetModel(lampmodel);
 			sceneObjects.add(lamps[i+2]);
 			lamps[i+2].SetColorsShininess(new float[]{0.2f, 0.2f,0.2f }, new float[]{0.7f, 0.7f,0.7f } , new float[]{0.9f, 0.9f,0.9f }, 10);
-		}
+		}*/
 	}
 
 	

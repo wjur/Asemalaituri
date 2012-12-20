@@ -17,7 +17,7 @@ public class SpotlightB extends Spotlight {
 		float[] lightDir = { 0, 0, 1, SHINE_ALL_DIRECTIONS };
 
 		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
-		float[] lightColorSpecular = { 0f, f1, (1 - f1), 1f };
+		float[] lightColorSpecular = { 1f, 1, 1, 1f };
 
 		// Set light parameters.
 		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, lightPos, 0);
@@ -25,8 +25,8 @@ public class SpotlightB extends Spotlight {
 		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_AMBIENT, lightColorAmbient, 0);
 		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_SPECULAR, lightColorSpecular, 0);
 		gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, lightColorSpecular, 0);
-		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_LINEAR_ATTENUATION, 0.05f);
-		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_QUADRATIC_ATTENUATION, 0.03f);
+		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_LINEAR_ATTENUATION, 0.009f);
+		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_QUADRATIC_ATTENUATION, 0.006f);
 		gl.glLightf(GL2.GL_LIGHT3, GL2.GL_SPOT_CUTOFF, 60 - 20 * f2);
 		gl.glEnable(GL2.GL_LIGHT3);
 	}
