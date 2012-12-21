@@ -113,6 +113,25 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, lvl[5].getTextureObject(gl));
 		
 		gl.glUniform1iv(sampler, 6, textures_ids, 0);
+		
+		
+		float SHINE_ALL_DIRECTIONS = 1;
+		float[] lightPos = { 0, 0, 0.01f, SHINE_ALL_DIRECTIONS };
+		float[] lightDir = { 0, 0, -1, SHINE_ALL_DIRECTIONS };
+
+		float[] lightColorAmbient = { 0.02f, 0.02f, 0.02f, 1f };
+		float[] lightColorSpecular = { 1f,  1f, 1f,  1f };
+
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPos, 0);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPOT_DIRECTION, lightDir, 0);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightColorAmbient, 0);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, lightColorSpecular, 0);
+		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lightColorSpecular, 0);
+		gl.glLightf(GL2.GL_LIGHT0, GL2.GL_LINEAR_ATTENUATION, 0);
+		gl.glLightf(GL2.GL_LIGHT0, GL2.GL_QUADRATIC_ATTENUATION, 0);
+		gl.glLightf(GL2.GL_LIGHT0, GL2.GL_SPOT_CUTOFF, 90);
+		gl.glEnable(GL2.GL_LIGHT0);
+		
 		camera.Update(delta);
 		Drawable.lapsedTime = lapsed;
 		gl.glPolygonMode( GL2.GL_FRONT_AND_BACK, GL2.GL_LINE );
@@ -121,6 +140,10 @@ public class Scene extends GLJPanel implements GLEventListener {
 		drawAll(gl, GL2.GL_CCW, nextint);
 		//renderWithMirror(gl, false, nextint);
 		
+		gl.glCullFace(GL2.GL_CW);
+		GLUT g = new GLUT();
+		gl.glTranslatef(-3, 3, 0);
+		g.glutSolidTeapot(1);
 		
 		gl.glFlush();
 		try {
@@ -134,12 +157,12 @@ public class Scene extends GLJPanel implements GLEventListener {
 
 	private void drawAll(GL2 gl, int cull, int nextint) {
 		gl.glFrontFace(cull);
-		setGlobalLight(gl, nextint);
+		//setGlobalLight(gl, nextint);
 		//s.DrawModels(gl, cull);
 		//s.setTexture0(selected_tid_m == 0 ? tid_m : tid_m2);
-		for (int i = 0; i < sceneObjects.size(); i++) {
-			((Drawable)sceneObjects.get(i)).Draw(gl, cull, 1);
-		}
+		//for (int i = 0; i < sceneObjects.size(); i++) {
+		//	((Drawable)sceneObjects.get(i)).Draw(gl, cull, 1);
+		//}
 		
 		for (int i = 0; i < sceneObjects.size(); i++) {
 			((Drawable)sceneObjects.get(i)).Draw(gl, cull, 0);
@@ -158,7 +181,7 @@ public class Scene extends GLJPanel implements GLEventListener {
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glShadeModel(GL2.GL_SMOOTH);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
-		gl.glEnable(GL2.GL_CULL_FACE);
+		//gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glEnable(GL2.GL_NORMALIZE);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
